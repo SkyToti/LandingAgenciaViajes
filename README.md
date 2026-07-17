@@ -17,7 +17,12 @@ Y abrir <http://localhost:4173>. También se puede abrir `index.html` directamen
 ## Estructura
 
 ```
-index.html                  Landing completa (HTML + CSS + JS en un solo archivo)
+index.html                  Estructura (HTML semántico)
+css/
+  styles.css                Sistema de diseño, layout y animaciones
+js/
+  main.js                   Scroll suave (Lenis) y animaciones de scroll (GSAP)
+  plane3d.js                Avión 3D (Three.js) con carga diferida
 prototipo/
   hero.html                 Primer prototipo del héroe (base del sistema de diseño)
   prompt-claude-design.md    Prompt usado en la fase de diseño
@@ -27,6 +32,11 @@ sistema-itinerarios/
 contexto.md                 Brief del proyecto (marca, contenido, alcances)
 .claude/launch.json         Configuración del servidor de previsualización
 ```
+
+El HTML, los estilos y el comportamiento están separados en archivos distintos. Se optó
+deliberadamente por **no** usar bundlers ni frameworks: para un sitio de este tamaño
+añaden complejidad sin beneficio, y así el proyecto se abre y despliega sin ningún paso
+de compilación.
 
 ## Detalles técnicos
 
