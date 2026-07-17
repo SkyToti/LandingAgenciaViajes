@@ -1,0 +1,17 @@
+# Reporte académico de estadías — NO publicar en repo público
+# (los detectores de plagio de la universidad podrían marcarlo como copiado de internet)
+reporte-estadias/
+
+# Documentos PDF (incluye material de terceros que no debe distribuirse)
+*.pdf
+
+# Export pesado e inservible del prototipo (bundle de ~2 MB empaquetado en JS)
+prototipo/Tierra de Viajes (standalone).html
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+*.log
+
+# Dependencias (por si en el futuro se agregan)
+node_modules/

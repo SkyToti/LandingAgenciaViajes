@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tierra de Viajes — Prototipo de dirección de arte</title>
+
+<!-- Tipografía: Fraunces (display serif) + Plus Jakarta Sans (UI) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  /* ============================================================
+     SISTEMA DE DISEÑO  (esto es el cimiento del que hablábamos)
+     ============================================================ */
+  :root {
+    /* Marca */
+    --navy:   #15233B;
+    --gold:   #E0A526;
+    --cream:  #F7F2E9;
+    --wa:     #25D366;
+    --red:    #C2362F;
+
+    /* Tinta derivada (no negro puro: se ve más caro) */
+    --ink:        #1B2433;
+    --ink-soft:   #4A5468;
+    --cream-2:    #EFE7D6;   /* crema un punto más oscura para fondos alternos */
+
+    /* Escala tipográfica FLUIDA con clamp() — respira en cualquier pantalla */
+    --step--1: clamp(0.83rem, 0.78rem + 0.2vw, 0.95rem);
+    --step-0:  clamp(1rem, 0.94rem + 0.3vw, 1.18rem);
+    --step-1:  clamp(1.3rem, 1.1rem + 0.9vw, 1.8rem);
+    --step-2:  clamp(2rem, 1.4rem + 2.6vw, 3.4rem);
+    --step-3:  clamp(2.8rem, 1.6rem + 5vw, 6rem);    /* titular héroe */
+
+    /* Escala de espacio — generosa y con ritmo (no padding uniforme de IA) */
+    --space-xs: 0.5rem;
+    --space-s:  1rem;
+    --space-m:  2rem;
+    --space-l:  4rem;
+    --space-xl: 7rem;
+    --space-2xl: clamp(6rem, 4rem + 10vw, 12rem);
+
+    --maxw: 1240px;
+    --radius: 4px;          /* sutil, NO el 16px redondito de plantilla */
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { -webkit-font-smoothing: antialiased; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    font-size: var(--step-0);
+    line-height: 1.6;
+  }
+
+  /* Lenis necesita esto para el scroll suave */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+  .wrap { width: min(92%, var(--maxw)); margin-inline: auto; }
+
+  /* ---------- Detalles tipográficos artesanales ---------- */
+  .eyebrow {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 34px; height: 1px;
+    background: var(--gold);
+    display: inline-block;
+  }
+
+  h1, h2 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 400;
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+  }
+
+  /* ============================================================
+     NAV
+     ============================================================ */
+  .nav {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--space-m) 0;
+  }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; width: min(92%, var(--maxw)); }
+  .logo {
+    font-family: "Fraunces", serif;
+    font-size: var(--step-1);
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+  .logo small { display:block; font-family:"Plus Jakarta Sans"; font-size:0.62rem; letter-spacing:0.3em; text-transform:uppercase; opacity:0.7; font-weight:500; }
+  .nav-links { display: flex; gap: var(--space-m); align-items: center; }
+  .nav-links a { color: #fff; text-decoration: none; font-size: var(--step--1); font-weight: 500; opacity: 0.88; transition: opacity .3s; }
+  .nav-links a:hover { opacity: 1; }
+
+  /* Botón WhatsApp — con artesanía en el hover */
+  .btn-wa {
+    --b: var(--wa);
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: var(--b);
+    color: #06351c;
+    font-weight: 600;
+    font-size: var(--step--1);
+    padding: 0.85rem 1.4rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: transform .4s var(--ease), box-shadow .4s var(--ease), background .3s;
+    box-shadow: 0 6px 22px -8px rgba(37,211,102,.6);
+  }
+  .btn-wa:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -10px rgba(37,211,102,.7); }
+  .btn-wa svg { width: 18px; height: 18px; }
+
+  .btn-wa.big { font-size: var(--step-0); padding: 1.1rem 1.9rem; }
+
+  @media (max-width: 760px) { .nav-links a:not(.btn-wa) { display: none; } }
+
+  /* ============================================================
+     HÉROE  — foto full-bleed, mucho aire, 1 sola idea
+     ============================================================ */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    color: #fff;
+    background: var(--navy); /* fallback si la foto tarda/no carga */
+    overflow: hidden;
+  }
+  .hero__img {
+    position: absolute; inset: 0;
+    background-image: url("https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=2000&auto=format&fit=crop");
+    background-size: cover;
+    background-position: center 40%;
+    transform: scale(1.08);
+    animation: slowZoom 14s var(--ease) forwards;
+  }
+  @keyframes slowZoom { to { transform: scale(1); } }
+
+  /* Gradiente editorial: oscurece abajo para que lea el texto, sin tapar la foto */
+  .hero__veil {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(to top, rgba(21,35,59,.92) 0%, rgba(21,35,59,.35) 45%, rgba(21,35,59,.05) 75%);
+  }
+  /* Grano sutil = sensación editorial/analógica (mata el look "plano de IA") */
+  .hero__grain {
+    position: absolute; inset: 0; opacity: .06; pointer-events: none; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .hero__content { position: relative; z-index: 2; padding-bottom: var(--space-xl); width: 100%; }
+  .hero h1 {
+    font-size: var(--step-3);
+    max-width: 16ch;
+    margin: var(--space-m) 0 var(--space-s);
+  }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero__sub {
+    font-size: var(--step-1);
+    font-weight: 400;
+    max-width: 34ch;
+    color: rgba(255,255,255,.85);
+    margin-bottom: var(--space-l);
+  }
+
+  /* Tira de confianza — discreta, abajo del todo */
+  .trust {
+    display: flex; flex-wrap: wrap; gap: var(--space-m) var(--space-l);
+    align-items: center;
+    padding-top: var(--space-m);
+    border-top: 1px solid rgba(255,255,255,.16);
+    font-size: var(--step--1);
+    color: rgba(255,255,255,.8);
+  }
+  .trust b { color: #fff; font-weight: 600; }
+  .stars { color: var(--gold); letter-spacing: 2px; }
+
+  /* ============================================================
+     SECCIÓN KARLA  — la persona al frente (antes era la #6)
+     ============================================================ */
+  .karla { padding: var(--space-2xl) 0; background: var(--cream); }
+  .karla__grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: var(--space-2xl);
+    align-items: center;
+  }
+  .karla__photo {
+    position: relative;
+    aspect-ratio: 4/5;
+    background: var(--cream-2) url("https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1200&auto=format&fit=crop") center/cover;
+    border-radius: var(--radius);
+  }
+  /* Marco dorado desplazado = detalle artesanal, asimetría intencional */
+  .karla__photo::after {
+    content:""; position:absolute; inset:0;
+    border:1px solid var(--gold);
+    transform: translate(18px,18px);
+    border-radius: var(--radius);
+    z-index:-1;
+  }
+  .karla h2 { font-size: var(--step-2); margin: var(--space-s) 0 var(--space-m); max-width: 18ch; }
+  .karla p { color: var(--ink-soft); max-width: 46ch; margin-bottom: var(--space-m); }
+  .seals { display:flex; flex-wrap:wrap; gap: var(--space-s); }
+  .seal {
+    font-size: var(--step--1); font-weight:600; color: var(--navy);
+    border:1px solid rgba(21,35,59,.18); border-radius: 999px;
+    padding: .45rem 1rem;
+  }
+  @media (max-width: 860px) {
+    .karla__grid { grid-template-columns: 1fr; gap: var(--space-xl); }
+    .karla__photo { max-width: 360px; }
+  }
+
+  /* ============================================================
+     MOVIMIENTO — revelados al hacer scroll (con propósito, no en todo)
+     ============================================================ */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 1s var(--ease), transform 1s var(--ease);
+  }
+  [data-reveal].in { opacity: 1; transform: none; }
+  [data-reveal][data-d="1"] { transition-delay: .12s; }
+  [data-reveal][data-d="2"] { transition-delay: .24s; }
+  [data-reveal][data-d="3"] { transition-delay: .36s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] { opacity:1; transform:none; transition:none; }
+    .hero__img { animation: none; transform: none; }
+  }
+
+  .note { background: var(--navy); color: var(--cream); text-align:center; padding: var(--space-l) 0; font-size: var(--step--1); }
+  .note span { color: var(--gold); }
+</style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="wrap">
+      <div class="logo">Tierra de Viajes<small>by Fraveo</small></div>
+      <div class="nav-links">
+        <a href="#">Cómo funciona</a>
+        <a href="#">Sobre mí</a>
+        <a href="#">Inversión</a>
+        <a class="btn-wa" href="https://wa.me/527774448065?text=Hola,%20me%20interesa%20el%20Dise%C3%B1o%20de%20Viajes">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.06c-.25.7-1.44 1.33-1.99 1.41-.51.08-1.15.11-1.86-.12-.43-.14-.98-.32-1.69-.63-2.97-1.28-4.91-4.27-5.06-4.47-.15-.2-1.21-1.6-1.21-3.06 0-1.45.76-2.17 1.03-2.46.27-.3.59-.37.79-.37.2 0 .39 0 .57.01.18.01.43-.07.67.51.25.59.84 2.04.91 2.19.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.39-.45.52-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.65-.07.18-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.71.81 2.01.96.3.15.5.22.57.35.07.12.07.7-.18 1.4Z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HÉROE -->
+  <header class="hero">
+    <div class="hero__img"></div>
+    <div class="hero__veil"></div>
+    <div class="hero__grain"></div>
+
+    <div class="hero__content">
+      <div class="wrap">
+        <span class="eyebrow" data-reveal>Diseño de Viajes</span>
+        <h1 data-reveal data-d="1">Viaja a tu aire, <em>sin límite</em> de tiempos.</h1>
+        <p class="hero__sub" data-reveal data-d="2">Itinerarios a la medida, diseñados a mano por una especialista que vivió 12 años en Europa.</p>
+
+        <div data-reveal data-d="3">
+          <a class="btn-wa big" href="https://wa.me/527774448065?text=Hola,%20me%20interesa%20el%20Dise%C3%B1o%20de%20Viajes">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg>
+            Cotizar por WhatsApp
+          </a>
+        </div>
+
+        <div class="trust" data-reveal data-d="3" style="margin-top: var(--space-xl)">
+          <span><span class="stars">★★★★★</span> <b>5.0</b> en Google · 29 reseñas</span>
+          <span><b>RNT</b> registrado</span>
+          <span>Miembro de <b>AMORAV</b></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- KARLA: la persona, al frente -->
+  <section class="karla">
+    <div class="wrap">
+      <div class="karla__grid">
+        <div class="karla__photo" data-reveal></div>
+        <div>
+          <span class="eyebrow" data-reveal>No es una app. Es Karla.</span>
+          <h2 data-reveal data-d="1">Doce años viviendo Europa, ahora diseñando el viaje que tú sí vas a disfrutar.</h2>
+          <p data-reveal data-d="2">Olvídate de las 40 pestañas abiertas y del miedo a equivocarte de hotel o de tren. Yo conozco las rutas, los tiempos reales entre ciudades y los rincones que no salen en las guías — y lo convierto en un itinerario hecho para ti.</p>
+          <div class="seals" data-reveal data-d="3">
+            <span class="seal">Especialista en Italia</span>
+            <span class="seal">+12 años en turismo en Europa</span>
+            <span class="seal">RNT 04170070089d5</span>
+            <span class="seal">Mesa directiva AMORAV</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="note">Prototipo de dirección de arte · sustituye las fotos por las reales de Karla / Unsplash con licencia · <span>premium sin 3D</span></div>
+
+  <!-- MOVIMIENTO: Lenis (scroll suave estándar 2026) + revelados vanilla -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script>
+    // Scroll suave con física — el mayor "ROI" de sensación premium
+    if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+      function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+    }
+    // Revelados al entrar en viewport (sin librería: robusto y ligero)
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
