@@ -55,8 +55,8 @@ de compilación.
 
 ## Pendientes
 
-- Sustituir las fotografías de placeholder (Unsplash) por las reales de la agencia.
-- Integrar el logotipo definitivo.
+- Sustituir las fotografías de placeholder restantes (héroe, Toscana y corte central)
+  por fotografías reales de la agencia. La de la asesora y la de Roma ya son definitivas.
 - Conectar las reseñas reales de Google.
 - Pase de rendimiento (WebP, `preload`) antes de lanzar campañas de anuncios.
 - Construir el portal de itinerarios (ver `sistema-itinerarios/CONTEXTO.md`).

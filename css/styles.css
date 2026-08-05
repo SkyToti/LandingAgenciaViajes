@@ -112,7 +112,7 @@
   .karla .wrap{position:relative;z-index:1;}
   .karla__grid{display:grid;grid-template-columns:1.05fr 0.95fr;gap:clamp(2.5rem,7vw,7rem);align-items:end;}
   .karla__photo{aspect-ratio:4/5;border-radius:2px;background:var(--cream-2);}
-  .karla__photo .img-i{background-image:url("https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1400&auto=format&fit=crop");}
+  .karla__photo .img-i{background-image:url("../img/karla.webp");}
   .karla__text{padding-bottom:clamp(1rem,4vw,3rem);}
   .karla h2{font-size:clamp(1.75rem, 1.15rem + 2.3vw, 3rem);margin:1.2rem 0 1.6rem;max-width:19ch;}
   .karla h2 em{color:var(--gold-deep);}
