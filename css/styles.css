@@ -68,12 +68,21 @@
   /* ============================== NAV ============================== */
   .nav{position:absolute;top:0;left:0;right:0;z-index:30;padding:clamp(1.1rem,3vw,1.9rem) 0;}
   .nav .wrap{display:flex;align-items:center;justify-content:space-between;}
-  .logo{font-family:"Fraunces",serif;font-size:clamp(1.55rem, 1.25rem + 1.2vw, 2.1rem);color:#fff;line-height:1;}
+  .logo{display:flex;align-items:center;gap:.72rem;font-family:"Fraunces",serif;font-size:clamp(1.55rem, 1.25rem + 1.2vw, 2.1rem);color:#fff;line-height:1;}
+  /* emblema en em: escala solo con el tamaño del logotipo */
+  .logo__mark{height:1.6em;width:auto;flex:none;filter:drop-shadow(0 1px 6px rgba(16,25,43,.45));}
+  .logo>span{white-space:nowrap;}   /* el nombre nunca se parte en dos líneas */
   .logo small{display:block;font-family:"Plus Jakarta Sans";font-size:.68rem;letter-spacing:.34em;text-transform:uppercase;opacity:.78;font-weight:500;margin-top:5px;}
   .nav-links{display:flex;gap:var(--space-m,2rem);align-items:center;}
-  .nav-links a:not(.btn){color:#fff;text-decoration:none;font-size:var(--step--1);font-weight:500;opacity:.85;margin-left:2rem;transition:opacity .3s;}
+  .nav-links a:not(.btn){color:#fff;text-decoration:none;font-size:var(--step--1);font-weight:500;opacity:.85;margin-left:2rem;white-space:nowrap;transition:opacity .3s;}
   .nav-links a:not(.btn):hover{opacity:1;}
   @media(max-width:860px){.nav-links a:not(.btn){display:none;}}
+  /* en móvil el logotipo se reduce para dejar aire frente al botón */
+  @media(max-width:560px){
+    .logo{font-size:clamp(1.05rem, 0.55rem + 2.3vw, 1.3rem);gap:.5rem;}
+    .logo__mark{height:1.5em;}
+    .logo small{font-size:.54rem;letter-spacing:.26em;margin-top:3px;}
+  }
 
   /* ============================== HERO ============================== */
   .hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;color:#fff;background:var(--navy);overflow:hidden;}
@@ -163,6 +172,10 @@
   .tq:nth-child(3){margin-left:clamp(0px,18vw,16rem);}
   .tq:nth-child(4){margin-left:auto;text-align:right;}
   @media(max-width:720px){.tq,.tq:nth-child(n){max-width:100%;margin-left:0;text-align:left;}}
+  /* cierre de sección: reseñas verificables en Google */
+  .testi__more{margin-top:clamp(3rem,7vw,5rem);padding-top:1.8rem;border-top:1px solid rgba(21,35,59,.12);display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.5rem;font-size:var(--step--1);color:var(--ink-soft);}
+  .testi__more .stars{color:var(--gold-deep);letter-spacing:2px;}
+  .testi__more b{color:var(--navy);font-weight:600;}
 
   /* ============================== INVERSIÓN ============================== */
   .invest{padding:clamp(6rem,13vw,12rem) 0;background:var(--navy);color:var(--cream);}
