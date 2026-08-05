@@ -28,6 +28,7 @@
 | Storage | Bucket **privado** + URL firmada temporal | Un bucket público haría el token inútil |
 | Stack front | HTML/CSS/JS estático, sin framework ni build | Igual que la landing: se despliega en cualquier hosting, sin pasos de compilación |
 | Backend propio | **No existe.** El navegador habla directo a Supabase | Menos piezas, menos costo, menos que mantener |
+| Hosting y dominio | **Hostinger** (Apache), un solo dominio para todo | Landing en `/`, panel en `/admin`, itinerarios en `/viaje/{token}`. Un pago, un certificado, misma marca en el enlace que llega por WhatsApp |
 | PWA / service worker | **Fuera del v1** (ver §4) | Complejidad alta y riesgo de servir contenido viejo, que es justo el fallo peligroso |
 
 ---
@@ -38,17 +39,35 @@ Estas son las que hacen perder horas si se descubren tarde.
 
 ### 2.1 La ruta `/viaje/{token}` no funciona sola en hosting estático
 Un hosting estático busca un archivo llamado `viaje/xY7k2Lp9`, que no existe → 404.
-Tres salidas, elegir una **antes de empezar**:
 
-- **A) Query param — la más simple y portátil:** `/viaje/?v=xY7k2Lp9`.
-  Funciona en cualquier hosting sin configurar nada. Estéticamente un poco menos limpia.
-- **B) Reescritura en el servidor:** en Hostinger (Apache) con `.htaccess`;
-  en Cloudflare Pages / Netlify con `_redirects`. URL bonita, pero atada al hosting.
-- **C) Hash:** `/viaje/#xY7k2Lp9`. Funciona en todos lados y **el token nunca viaja
-  al servidor** (ventaja real de privacidad), pero se ve raro al compartir.
+> ✅ **DECIDIDO (2026-08-05): reescritura con `.htaccess`.**
+> El cliente contrata **dominio + hosting en Hostinger**, que corre sobre Apache, así que
+> la reescritura está disponible desde el día uno. Se usa la URL limpia
+> `tudominio.com/viaje/xY7k2Lp9` porque el enlace llega por WhatsApp a alguien que acaba
+> de pagar un viaje caro: una URL limpia genera confianza y una con `?v=` parece un enlace
+> de rastreo.
 
-> **Recomendación: (A) para el MVP**, y migrar a (B) cuando el dominio esté en Hostinger.
-> Si se elige (B), documentar el archivo de reescritura en este repo.
+Archivo `/viaje/.htaccess` (o en la raíz, ajustando la ruta):
+
+```apache
+RewriteEngine On
+# Si el recurso pedido no existe como archivo o carpeta, sirve la página
+# del itinerario y deja el token disponible en la variable "v".
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([A-Za-z0-9_-]+)/?$ index.html?v=$1 [L,QSA]
+```
+
+En el JavaScript, leer el token de forma tolerante para que ambas formas funcionen:
+
+```js
+const token = new URLSearchParams(location.search).get('v')
+           || location.pathname.split('/').filter(Boolean).pop();
+```
+
+*Alternativas si algún día cambia el hosting:* query param `/viaje/?v=token` (funciona en
+cualquier lado) o hash `/viaje/#token` (el token nunca llega al servidor). El código de
+arriba ya soporta la primera sin cambios.
 
 ### 2.2 WhatsApp genera vista previa del enlace — cuidado con la fuga
 Al pegar el enlace, WhatsApp **descarga la página** para armar la miniatura. Implica:
@@ -92,7 +111,9 @@ gratuito de Supabase al momento de construir (cambian).
 
 ### Paso 0 — Prerrequisitos (necesita al usuario, no a Claude)
 - [ ] Crear proyecto en Supabase y guardar URL + clave publicable.
-- [ ] Decidir la ruta (§2.1). Sugerido: query param.
+- [x] ~~Decidir la ruta~~ → **decidido:** `.htaccess` en Hostinger, URL limpia (§2.1).
+- [ ] Contratar dominio + hosting en Hostinger y **activar el SSL gratuito**
+      (el sitio debe servirse por HTTPS; algunas APIs del navegador no funcionan sin él).
 - [ ] **Dirección de correo de Karla** (solo la dirección: el acceso es por enlace mágico,
       nunca se necesita entrar a su bandeja ni conocer su contraseña). Debe ser un correo
       que solo ella controle y revise a diario.
