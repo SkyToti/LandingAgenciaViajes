@@ -152,13 +152,53 @@ itinerarios
 - **F4 — Pulido:** PIN, expiración/revocado, estadísticas simples ("¿ya lo abrió?"),
   plantilla de mensaje de WhatsApp prellenada para Karla.
 
-## 7. Preguntas abiertas para Karla (resolver antes/durante F1)
+## 7. Respuestas de Karla — decisiones de producto CERRADAS
 
-1. ¿El itinerario cambia después de entregado con qué frecuencia? (afecta F1: versionado)
-2. ¿Quiere capturar el día-por-día estructurado o solo subir su PDF? (afecta F3)
-3. ¿PIN sí o no por defecto? (fricción vs privacidad)
-4. ¿Caducidad de enlaces? (sugerencia: nunca, o 12 meses tras fecha_fin)
-5. ¿Cuántos itinerarios al mes? (dimensionar plan gratuito de Supabase — sobra de sobra)
+> Contestadas el 2026-08-05. No volver a preguntar; construir con esto.
+
+| Pregunta | Respuesta | Consecuencia para el desarrollo |
+|---|---|---|
+| ¿Cambia el itinerario tras entregarlo? | **Casi nunca.** Se entrega como versión final | El aviso de actualización baja de prioridad: basta con `version` + "Actualizado el…". El botón de "copiar aviso" pasa al Paso 7 |
+| ¿Capturar el día por día? | **No. Solo sube su PDF tal cual** | Sin captura estructurada. El calendario se queda en **nivel 0** (un evento que cubre el viaje). El campo `dias` no se usa por ahora |
+| ¿PIN de 4 dígitos? | **No.** Enlace directo | Fuera del alcance. Dejar el campo `pin` en la tabla por si algún día se pide, pero sin interfaz |
+| ¿Caducidad de enlaces? | **Sí: 3 meses después de terminar el viaje** | Ver §7.1 abajo — tiene implicaciones |
+| ¿Volumen mensual? | **Pocos al mes** (ticket alto, viajes de ~$200 mil MXN) | El plan gratuito de Supabase sobra con holgura |
+| ¿Qué le escribe al cliente por WhatsApp? | Lo delega — su estilo es muy informal | Redactar nosotros la plantilla (§7.2) y dejarla editable |
+
+### 7.1 Caducidad: consecuencias que hay que respetar
+
+La caducidad se calcula como **`fecha_fin` + 3 meses**. Eso obliga a dos cosas:
+
+1. **Las fechas del viaje dejan de ser opcionales en la práctica.** Alimentan tanto la
+   caducidad como el botón de calendario. En el formulario deben pedirse de forma
+   destacada. Si aun así se dejan vacías, el respaldo es: **caducar 6 meses después de
+   la creación** (nunca dejar un registro sin fecha de caducidad).
+2. **Un enlace caducado no puede ser un callejón sin salida.** La página debe mostrar
+   un mensaje cálido del tipo *"Este enlace ya caducó. Escríbeme y te lo reactivo en un
+   momento"* con el botón de WhatsApp de Karla. Y en `/admin` debe existir un botón
+   **"Reactivar 3 meses más"** de un solo clic.
+
+> Nota: la recomendación técnica era no caducar (un cliente que revisa su viaje años
+> después es un recuerdo y una recomendación). Karla prefirió caducar; se respeta, y por
+> eso reactivar debe ser trivial en vez de imposible.
+
+### 7.2 Plantilla del mensaje de WhatsApp
+
+Se ofrece en `/admin` con un botón "Copiar mensaje", ya con el enlace insertado, y
+**editable** antes de enviar:
+
+```
+¡Hola {nombre}! Ya quedó listo tu itinerario para {destino} ✈️
+
+Aquí lo puedes ver y descargar:
+{enlace}
+
+Te recomiendo descargarlo antes de viajar para tenerlo aunque no tengas internet.
+Cualquier duda me escribes por aquí. ¡Ya falta poco!
+```
+
+Tono: cálido y directo, sin sonar corporativo. Un solo emoji. El "te recomiendo
+descargarlo" no es adorno: es la instrucción que resuelve el modo sin conexión.
 
 ## 8. Reglas heredadas del proyecto madre
 

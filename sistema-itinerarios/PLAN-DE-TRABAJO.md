@@ -93,8 +93,10 @@ gratuito de Supabase al momento de construir (cambian).
 ### Paso 0 — Prerrequisitos (necesita al usuario, no a Claude)
 - [ ] Crear proyecto en Supabase y guardar URL + clave publicable.
 - [ ] Decidir la ruta (§2.1). Sugerido: query param.
-- [ ] Correo de Karla para el acceso al panel.
-- [ ] Responder las preguntas de `CONTEXTO.md` §7.
+- [ ] **Dirección de correo de Karla** (solo la dirección: el acceso es por enlace mágico,
+      nunca se necesita entrar a su bandeja ni conocer su contraseña). Debe ser un correo
+      que solo ella controle y revise a diario.
+- [x] ~~Responder las preguntas para Karla~~ → **contestadas**, ver `CONTEXTO.md` §7.
 
 ### Paso 1 — Base de datos y almacenamiento
 - Tabla `itinerarios` (esquema en `CONTEXTO.md` §3, más `version` y `updated_at` por §2.5).
@@ -110,17 +112,22 @@ gratuito de Supabase al momento de construir (cambian).
 - ✅ *Aceptación:* sin sesión redirige a la pantalla de acceso; con el enlace del correo entra.
 
 ### Paso 3 — Crear itinerario (el corazón para Karla)
-- Formulario mínimo: nombre del cliente · título · tipo · fechas (opcional) · PDF.
-- Al guardar: sube el PDF, genera token (nanoid ≥21), inserta registro.
+- Formulario mínimo: nombre del cliente · título · tipo · **fechas del viaje** · PDF.
+  Las fechas van destacadas, no como campo secundario: alimentan la caducidad y el
+  calendario (`CONTEXTO.md` §7.1). Si se dejan vacías, caducidad de respaldo a 6 meses.
+- Al guardar: sube el PDF, genera token (nanoid ≥21), calcula `expires_at`
+  (= `fecha_fin` + 3 meses), inserta registro.
 - Devuelve el enlace con **botón "Copiar"** y **botón "Copiar mensaje para WhatsApp"**
-  (texto cálido ya redactado, con el enlace dentro).
+  (plantilla en `CONTEXTO.md` §7.2, editable antes de enviar).
 - ✅ *Aceptación:* Karla completa el flujo en menos de 60 segundos y pega el mensaje en WhatsApp.
 
 ### Paso 4 — Listar y administrar
-- Lista de itinerarios: cliente, título, fecha, estado.
-- Acciones: recopiar enlace · reemplazar PDF (sube `version`) · revocar.
+- Lista de itinerarios: cliente, título, fecha, estado (activo / por caducar / caducado).
+- Acciones: recopiar enlace · recopiar mensaje · reemplazar PDF (sube `version`) ·
+  **"Reactivar 3 meses más"** (un clic, §7.1) · revocar.
 - Buscador por nombre de cliente.
-- ✅ *Aceptación:* Karla encuentra un itinerario de hace 3 meses y recopia su enlace.
+- ✅ *Aceptación:* Karla encuentra un itinerario de hace 3 meses, recopia su enlace y
+  reactiva uno caducado sin ayuda.
 
 ### Paso 5 — Página del cliente `/viaje/{token}`
 - Marca completa heredada de la landing, tipografía grande, mobile-first.
@@ -139,8 +146,10 @@ gratuito de Supabase al momento de construir (cambian).
 - ✅ *Aceptación:* el archivo abre en iOS y Android y crea el evento.
 
 ### Paso 7 — Pulido
-- PIN opcional de 4 dígitos · expiración/revocado · aviso de actualización (§2.5).
+- Aviso de actualización (§2.5): botón "copiar aviso" al reemplazar el PDF.
+  *Baja prioridad:* Karla confirmó que el itinerario casi nunca cambia tras entregarse.
 - Métrica mínima: "última apertura" (útil para que Karla sepa si el cliente ya lo vio).
+- **PIN: descartado** por decisión de Karla. Dejar la columna en la tabla, sin interfaz.
 
 ---
 
