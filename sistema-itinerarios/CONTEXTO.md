@@ -1,7 +1,10 @@
 # Sistema de Itinerarios — Tierra de Viajes by Fraveo
 
 Contexto para Claude Code. Proyecto independiente de la landing (que vive en la carpeta padre).
-Este documento define QUÉ construir y POR QUÉ, para arrancar el desarrollo en una sesión nueva.
+Este documento define **QUÉ** construir y **POR QUÉ**.
+
+> 👉 El **CÓMO** (orden de construcción, criterios de aceptación y trampas técnicas ya
+> identificadas) está en **`PLAN-DE-TRABAJO.md`**. Leer ambos antes de empezar.
 
 ---
 
@@ -43,6 +46,9 @@ no los va a usar y con razón.
 - Al guardar: genera **token largo no adivinable** (nanoid ≥21 chars) y devuelve el
   enlace listo para copiar: `https://dominio.com/viaje/{token}` → Karla lo pega en WhatsApp.
 - Reenviar = mismo enlace. Nunca se regenera (salvo que ella lo revoque).
+- **Además del alta, necesita administrar:** lista de itinerarios con buscador por
+  nombre de cliente, recopiar enlace, reemplazar el PDF y revocar. Sin esto tendría que
+  guardar los enlaces por su cuenta, que es volver al problema original.
 
 ### b) Página del cliente `/viaje/{token}` (sin login)
 - Diseño con la marca de la agencia (paleta navy/dorado/crema, Fraunces + Plus Jakarta
@@ -65,12 +71,17 @@ no los va a usar y con razón.
      El calendario nativo funciona OFFLINE y avisa solo. Cero curva de aprendizaje.
   4. (Opcional) "Guardar en tu pantalla de inicio" con instrucciones simples.
 
-### c) Offline: PWA
-- Service worker que cachea la página del itinerario + assets + el PDF al primer visit.
-- Después funciona en modo avión / sin señal, abre desde el ícono como una app.
-- Banner discreto la primera vez: "✓ Tu itinerario ya quedó guardado en este teléfono".
-- Capas de redundancia offline: PWA + PDF descargado + eventos de calendario.
-  (Si una falla, las otras sostienen.)
+### c) Offline
+> ⚠️ **Decisión revisada.** Esta sección proponía una PWA con service worker.
+> Se descartó para el v1 — ver el razonamiento en `PLAN-DE-TRABAJO.md` §4.
+> Resumen: el PDF descargado ya resuelve el offline y lo entiende cualquiera, mientras
+> que un service worker mal versionado puede servir un itinerario viejo, que es
+> justo el fallo peligroso en un viaje.
+
+**Enfoque para el v1 (UX, no tecnología):** un bloque claro en la página del cliente,
+*"Antes de viajar: descarga tu itinerario para tenerlo sin internet"*, con el botón de
+descarga al lado. Se apoya en dos capas que sí funcionan sin conexión: el **PDF
+descargado** y el **evento de calendario**.
 
 ### d) Seguridad (modelo "capability URL")
 - Quien tiene el enlace, entra (como "cualquiera con el enlace" de Google Docs).
@@ -97,8 +108,14 @@ itinerarios
   pin           text  (opcional, hash)
   expires_at    timestamptz (opcional)
   revoked       bool default false
+  version       int default 1        (sube al reemplazar el PDF)
+  updated_at    timestamptz          (se muestra como "Actualizado el ..." al cliente)
+  last_opened_at timestamptz         (opcional: para que Karla sepa si ya lo vieron)
   created_at    timestamptz
 ```
+
+> `version` y `updated_at` no son opcionales: resuelven el problema de la copia vieja
+> descargada en el teléfono del cliente. Ver `PLAN-DE-TRABAJO.md` §2.5.
 
 ## 4. Stack
 
