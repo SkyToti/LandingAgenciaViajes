@@ -4,9 +4,22 @@
 > orden de construcción, criterios de aceptación y las trampas técnicas ya identificadas.
 > Escrito para que una sesión nueva de Claude Code arranque sin re-decidir nada.
 
+> 📍 **Los cuatro documentos del proyecto:**
+> · `CONTEXTO.md` — qué construir y por qué
+> · `PLAN-DE-TRABAJO.md` (este) — cómo construirlo, en qué orden, y las trampas
+> · `COMO-FUNCIONA.md` — cómo funciona lo que ya está construido
+> · `PUESTA-EN-PRODUCCION.md` — qué cambia el día que se publica
+
 ---
 
-## 0. Estado al abrir este documento
+## 0. Estado
+
+**Al 2026-08-05: hechos los pasos 1, 2, 3 y 5. Faltan el 4, el 6 y el 7.**
+Karla ya puede entrar al panel, crear un itinerario y mandar el enlace; el cliente ya
+puede abrirlo, descargarlo e imprimirlo. Todo probado en local contra Supabase.
+El detalle de lo construido está en `COMO-FUNCIONA.md`.
+
+### Estado original al escribir este documento
 
 - **Nada construido todavía.** Solo diseño y decisiones.
 - La **landing ya está terminada y desplegada** en la carpeta padre. De ahí se hereda
@@ -105,6 +118,74 @@ extranjero y consumo del plan gratuito. Definir política en `/admin`:
 avisar si supera ~8 MB y sugerir comprimir. Verificar los límites vigentes del plan
 gratuito de Supabase al momento de construir (cambian).
 
+> Al construir el Paso 1 se fijó el tope duro del bucket en **25 MB por archivo**, con
+> el aviso de los ~8 MB pendiente para el formulario de `/admin`.
+
+### 2.7 El cliente sin sesión no puede firmar la URL del PDF por sí mismo
+*(Descubierta al construir el Paso 1, 2026-08-05.)*
+
+Parecía que el navegador podría pedirle a Supabase una URL firmada directamente, pero
+`createSignedUrl` exige permiso de lectura sobre `storage.objects`, y ese permiso no se
+puede acotar a "un solo archivo": si se le concede al rol anónimo, cualquiera con la clave
+publicable puede **listar el bucket entero** y descargar los PDFs de todos los clientes.
+Postgres no distingue "leer este archivo" de "listar todos" — las dos cosas son un `SELECT`.
+
+> ✅ **DECIDIDO: una Edge Function firma la URL.** Recibe el token, lo valida contra la
+> tabla y devuelve la URL firmada solo si el itinerario está vigente.
+
+No contradice "backend propio: no existe" (§1): la función vive dentro de Supabase, no hay
+servidor que contratar ni mantener, y el hosting sigue siendo estático. Usa la clave de
+servicio que Supabase le inyecta sola como variable de entorno, así que esa clave nunca
+pasa por el repositorio ni por el navegador.
+
+Dos ventajas que salen gratis:
+- La firma se genera **solo al pulsar "Descargar"**, no al cargar la página, así que la
+  precarga de WhatsApp (§2.2) no consume firmas.
+- Es el sitio natural donde registrar `last_opened_at` filtrando esa precarga (Paso 7).
+
+*(En `/admin` no hace falta: Karla está autenticada y firma directamente.)*
+
+### 2.8 Con magic link, "usuario autenticado" no significa "Karla"
+*(Descubierta al construir el Paso 1, 2026-08-05.)*
+
+Las políticas de escritura de la tabla dan acceso total al rol `authenticated`, que es lo
+correcto **siempre que solo exista la cuenta de Karla**. Supabase, por defecto, permite que
+cualquiera se registre: bastaría con pedir un enlace mágico a un correo propio para entrar
+con ese rol y leer todos los itinerarios.
+
+**Obligatorio antes de dar por bueno el Paso 2:** desactivar el registro público en el
+dashboard (Authentication → Sign In / Providers → *Allow new users to sign up*) y crear la
+cuenta de Karla a mano por invitación.
+
+> ✅ Hecho el 2026-08-05 y **comprobado desde fuera**: `/auth/v1/signup` responde
+> `signup_disabled` y `auth.users` sigue vacío tras el intento.
+
+### 2.9 El correo del enlace mágico no le va a llegar a Karla
+*(Descubierta al construir el Paso 2, 2026-08-05.)*
+
+Supabase trae un servicio de correo incluido, pero con dos límites que aquí duelen:
+
+1. **Solo entrega a miembros de la organización de Supabase.** Textual en su documentación:
+   *"Supabase Auth will refuse to deliver messages to addresses that are not part of the
+   project's team."* Karla nunca va a ser miembro de la organización, así que su enlace de
+   acceso **no llegaría jamás**. Fallaría el día de la entrega, no antes.
+2. Es de "mejor esfuerzo" y con un tope de pocos correos por hora. No es para producción.
+
+**Durante el desarrollo** basta con usar el correo de la cuenta de Supabase, o invitar a la
+organización el correo con el que se quiera probar.
+
+**Antes de entregar es obligatorio configurar un SMTP propio** (Authentication → Emails →
+SMTP Settings). Resend, Brevo, SendGrid, AWS SES o ZeptoMail sirven; el plan gratuito de
+cualquiera sobra, porque los únicos correos que manda el sistema son los accesos de Karla
+—los clientes reciben su enlace por WhatsApp, no por correo—.
+
+> Sin este paso el portal funciona en local y **Karla no puede entrar en producción**.
+> Es el fallo más silencioso de todo el proyecto: no da error hasta la entrega.
+
+También conviene dejar el **Site URL** apuntando al sitio real (viene por defecto en
+`http://localhost:3000`): es el destino al que Supabase redirige cuando una URL no coincide
+con la lista permitida.
+
 ---
 
 ## 3. Orden de construcción (cada paso entrega algo funcionando)
@@ -116,12 +197,21 @@ gratuito de Supabase al momento de construir (cambian).
 > publicación final necesita el dominio contratado. No esperar por él.
 
 **Bloqueante — se necesita antes de escribir código:**
-- [ ] Proyecto de Supabase creado; guardar la URL y la clave publicable.
-      Lo puede crear el desarrollador con su propia cuenta.
-      ⚠️ Prever la titularidad: si el proyecto vive en la cuenta personal del
-      desarrollador, la agencia perdería el acceso el día que la relación termine.
-      Supabase permite transferir proyectos entre organizaciones; acordarlo desde
-      el inicio o crearlo directamente en una cuenta de la agencia.
+- [x] Proyecto de Supabase creado (2026-08-05), región us-east-2, Postgres 17.
+      URL y clave publicable ya en `public/js/supabase-config.js`.
+
+      ✅ **Titularidad DECIDIDA (2026-08-05): el proyecto vive en la cuenta personal
+      del desarrollador y no se transfiere a la agencia.**
+      Queda constancia de lo que eso implica: la agencia no es titular, así que el día
+      que la relación termine perdería el acceso a la base de datos y a los PDFs de sus
+      clientes. Si algún día se quiere revertir, Supabase permite transferir el proyecto
+      a otra organización sin migrar los datos.
+
+      Las dos credenciales que necesita el front (URL del proyecto y **clave publicable**)
+      viven en `public/js/supabase-config.js`, que **sí se versiona**: son públicas por
+      diseño y la seguridad descansa en RLS (§5.7). La `service_role` / *secret key*, la
+      contraseña de la base de datos y el *personal access token* **nunca** entran al
+      repositorio ni al navegador.
 
 **No bloqueante — se resuelve más adelante:**
 - [ ] Correo de Karla para el acceso al panel. Durante el desarrollo se puede probar
@@ -138,7 +228,7 @@ gratuito de Supabase al momento de construir (cambian).
 - [x] Estructura del repositorio → el sitio vive en `public/`; el portal se construye
       dentro de `public/admin/` y `public/viaje/`.
 
-### Paso 1 — Base de datos y almacenamiento
+### Paso 1 — Base de datos y almacenamiento  ✅ HECHO
 - Tabla `itinerarios` (esquema en `CONTEXTO.md` §3, más `version` y `updated_at` por §2.5).
 - Bucket **privado** `itinerarios`.
 - **RLS activo**: escritura solo para el usuario autenticado; lectura pública
@@ -147,11 +237,11 @@ gratuito de Supabase al momento de construir (cambian).
 - ✅ *Aceptación:* desde el navegador sin sesión, intentar listar la tabla → devuelve vacío
   o error. Con el token exacto → devuelve un registro.
 
-### Paso 2 — Acceso de Karla
+### Paso 2 — Acceso de Karla  ✅ HECHO
 - `/admin` protegido con magic link.
 - ✅ *Aceptación:* sin sesión redirige a la pantalla de acceso; con el enlace del correo entra.
 
-### Paso 3 — Crear itinerario (el corazón para Karla)
+### Paso 3 — Crear itinerario (el corazón para Karla)  ✅ HECHO
 - Formulario mínimo: nombre del cliente · título · tipo · **fechas del viaje** · PDF.
   Las fechas van destacadas, no como campo secundario: alimentan la caducidad y el
   calendario (`CONTEXTO.md` §7.1). Si se dejan vacías, caducidad de respaldo a 6 meses.
@@ -161,7 +251,7 @@ gratuito de Supabase al momento de construir (cambian).
   (plantilla en `CONTEXTO.md` §7.2, editable antes de enviar).
 - ✅ *Aceptación:* Karla completa el flujo en menos de 60 segundos y pega el mensaje en WhatsApp.
 
-### Paso 4 — Listar y administrar
+### Paso 4 — Listar y administrar  ⏳ PENDIENTE
 - Lista de itinerarios: cliente, título, fecha, estado (activo / por caducar / caducado).
 - Acciones: recopiar enlace · recopiar mensaje · reemplazar PDF (sube `version`) ·
   **"Reactivar 3 meses más"** (un clic, §7.1) · revocar.
@@ -169,7 +259,7 @@ gratuito de Supabase al momento de construir (cambian).
 - ✅ *Aceptación:* Karla encuentra un itinerario de hace 3 meses, recopia su enlace y
   reactiva uno caducado sin ayuda.
 
-### Paso 5 — Página del cliente `/viaje/{token}`
+### Paso 5 — Página del cliente `/viaje/{token}`  ✅ HECHO
 - Marca completa heredada de la landing, tipografía grande, mobile-first.
 - Saludo personal ("Hola Ana, aquí está tu viaje a Italia"), fechas, "Actualizado el…".
 - Botones: **Abrir / Descargar** (§2.3, §2.4) · **Imprimir**.
@@ -180,12 +270,12 @@ gratuito de Supabase al momento de construir (cambian).
 - ✅ *Aceptación:* abrir en un iPhone real y en un Android real; descargar el PDF con el
   nombre correcto; imprimir y que el QR devuelva a la misma página.
 
-### Paso 6 — Calendario (nivel 0)
+### Paso 6 — Calendario (nivel 0)  ⏳ PENDIENTE
 - Botón "Agregar a mi calendario" → `.ics` con **un evento** que cubre el viaje,
   con el enlace en la descripción. Solo requiere las fechas.
 - ✅ *Aceptación:* el archivo abre en iOS y Android y crea el evento.
 
-### Paso 7 — Pulido
+### Paso 7 — Pulido  ⏳ PENDIENTE
 - Aviso de actualización (§2.5): botón "copiar aviso" al reemplazar el PDF.
   *Baja prioridad:* Karla confirmó que el itinerario casi nunca cambia tras entregarse.
 - Métrica mínima: "última apertura" (útil para que Karla sepa si el cliente ya lo vio).

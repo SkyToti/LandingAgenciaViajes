@@ -1,0 +1,232 @@
+/* La página del itinerario del cliente.
+   Hereda paleta, escala tipográfica y .btn de ../../css/styles.css.
+
+   Dos criterios mandan aquí y explican casi todas las decisiones:
+   · Se abre desde el celular, con una mano, a veces con mala señal.
+   · Quien la abre tiene 35-45+ y acaba de pagar un viaje caro: todo grande,
+     todo evidente, cero cosas que descifrar. */
+
+.viaje { background: var(--cream); }
+.estado[hidden] { display: none; }
+
+.estado__texto {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  font-family: "Fraunces", Georgia, serif;
+  font-style: italic;
+  font-size: var(--step-1);
+  color: var(--ink-soft);
+}
+
+/* ============================== CABECERA ============================== */
+.cabecera { background: var(--navy); padding: 1.2rem 0; }
+.cabecera .logo { color: #fff; font-size: clamp(1.15rem, .95rem + .8vw, 1.5rem); }
+
+/* ============================== SALUDO ============================== */
+.saludo { padding: clamp(3rem, 9vw, 5.5rem) 0 clamp(2rem, 5vw, 3rem); }
+
+.saludo h1 {
+  font-size: clamp(2rem, 1.35rem + 2.8vw, 3.4rem);
+  color: var(--navy);
+  margin: 1rem 0 1.5rem;
+  max-width: 18ch;
+}
+/* El título del viaje en segunda línea, dorado: es lo que el cliente busca con
+   la mirada al abrir la página. */
+.saludo h1 em {
+  display: block;
+  color: var(--gold-deep);
+  margin-top: .2rem;
+}
+
+.saludo__fechas {
+  font-size: var(--step-1);
+  color: var(--ink);
+  font-weight: 500;
+}
+.saludo__actualizado {
+  margin-top: .6rem;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+/* ============================== ACCIONES ============================== */
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: clamp(2.5rem, 6vw, 3.5rem);
+}
+
+/* Botones deliberadamente grandes: se pulsan con el pulgar, caminando,
+   y a veces con lentes de lectura puestos. */
+.btn--grande {
+  padding: 1.1rem 2.4rem;
+  font-size: var(--step-1);
+  border-radius: 999px;
+}
+.btn--claro {
+  background: transparent;
+  color: var(--navy);
+  border: 1px solid rgba(21, 35, 59, .3);
+  box-shadow: none;
+}
+.btn--claro:hover { border-color: var(--navy); box-shadow: none; }
+.btn--grande[disabled] { opacity: .6; cursor: progress; transform: none; }
+
+.acciones__error {
+  flex-basis: 100%;
+  color: var(--red);
+  font-size: var(--step-0);
+  border-left: 3px solid var(--red);
+  padding-left: .9rem;
+  line-height: 1.6;
+}
+
+/* ============================== VISOR ============================== */
+.visor { margin-bottom: clamp(2.5rem, 6vw, 3.5rem); }
+.visor iframe {
+  width: 100%;
+  height: min(80vh, 900px);
+  border: 1px solid rgba(21, 35, 59, .18);
+  border-radius: 2px;
+  background: #fff;
+}
+
+/* ============================== ANTES DE VIAJAR ============================== */
+/* Este bloque ES el modo sin conexión del proyecto. No es un adorno: es la
+   instrucción que evita que el cliente se quede sin itinerario en el viaje. */
+.offline {
+  background: var(--navy);
+  color: var(--cream);
+  padding: clamp(1.8rem, 4.5vw, 2.6rem);
+  border-radius: 2px;
+  margin-bottom: clamp(2.5rem, 6vw, 3.5rem);
+}
+.offline h2 {
+  font-size: var(--step-1);
+  color: var(--gold);
+  margin-bottom: .7rem;
+}
+.offline p {
+  color: rgba(247, 242, 233, .82);
+  max-width: 48ch;
+}
+
+/* ============================== EXTRAS ============================== */
+.extras { padding-bottom: clamp(2.5rem, 6vw, 3.5rem); }
+.extras__accion {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: var(--step-0);
+  font-weight: 600;
+  color: var(--navy);
+  text-decoration: underline;
+  text-underline-offset: .35em;
+  cursor: pointer;
+  transition: color .3s;
+}
+.extras__accion:hover { color: var(--gold-deep); }
+
+/* ============================== CONTACTO ============================== */
+.contacto {
+  border-top: 1px solid rgba(21, 35, 59, .14);
+  padding: clamp(2.5rem, 6vw, 4rem) 0;
+}
+.contacto h2 {
+  font-size: var(--step-1);
+  color: var(--navy);
+  margin-bottom: .6rem;
+}
+.contacto p {
+  color: var(--ink-soft);
+  max-width: 44ch;
+  margin-bottom: 1.6rem;
+}
+
+/* ============================== PIE ============================== */
+.pie {
+  background: var(--navy);
+  color: rgba(247, 242, 233, .55);
+  padding: 2rem 0;
+  font-size: var(--step--1);
+  margin-top: clamp(2rem, 5vw, 3rem);
+}
+.pie em { color: var(--gold); font-style: italic; }
+
+/* ============================== FINALES TRISTES ============================== */
+.estado--triste { background: var(--navy); min-height: 100svh; display: flex; }
+.triste {
+  margin: auto;
+  padding: clamp(3rem, 9vh, 6rem) 0;
+  color: var(--cream);
+  max-width: 34rem;
+}
+.triste .logo { color: #fff; margin-bottom: clamp(2.5rem, 7vh, 4rem); }
+.triste h1 {
+  font-size: clamp(1.9rem, 1.35rem + 2.4vw, 3rem);
+  color: #fff;
+  margin-bottom: 1.2rem;
+  max-width: 16ch;
+}
+.triste p {
+  color: rgba(247, 242, 233, .78);
+  font-size: var(--step-1);
+  max-width: 38ch;
+  margin-bottom: 2.4rem;
+}
+
+/* ============================== IMPRESIÓN ============================== */
+.solo-impresion { display: none; }
+
+@media print {
+  /* En papel no hay botones que pulsar ni marino que gastar tinta.
+     Solo tiene que quedar digno en blanco y negro. */
+  .cabecera,
+  .acciones,
+  .visor,
+  .offline,
+  .extras,
+  .contacto,
+  .pie { display: none !important; }
+
+  .viaje { background: #fff; }
+  body { font-size: 12pt; color: #000; }
+
+  .saludo { padding: 0 0 1.5cm; }
+  .saludo h1 { color: #000; font-size: 24pt; }
+  .saludo h1 em { color: #000; font-style: italic; }
+  .saludo__fechas { font-size: 13pt; color: #000; }
+  .saludo__actualizado { color: #444; }
+  .label { color: #444; }
+
+  .solo-impresion {
+    display: block;
+    border-top: 1pt solid #000;
+    padding-top: .8cm;
+    page-break-inside: avoid;
+  }
+  .solo-impresion__titulo {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 14pt;
+    margin-bottom: .3cm;
+  }
+  .solo-impresion__enlace {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 10pt;
+    word-break: break-all;
+    margin-top: .2cm;
+  }
+  .solo-impresion__qr { margin-top: .5cm; }
+  .solo-impresion__qr img,
+  .solo-impresion__qr canvas { width: 3.2cm; height: 3.2cm; }
+
+  @page { margin: 1.6cm; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn--grande:hover, .btn--claro:hover { transform: none; }
+}

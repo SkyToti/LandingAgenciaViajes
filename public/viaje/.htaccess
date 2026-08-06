@@ -1,0 +1,19 @@
+# URL limpia para los itinerarios: tudominio.com/viaje/AgOTa2GF-gYSbs7Tly4rfcWJ
+#
+# Sin esto, Apache busca un archivo llamado como el token, no lo encuentra y
+# devuelve 404 (PLAN-DE-TRABAJO.md §2.1). La regla sirve siempre index.html y le
+# deja el token en la variable "v", que es justo lo que lee viaje.js.
+#
+# Se usa URL limpia y no ?v=token porque este enlace llega por WhatsApp a alguien
+# que acaba de pagar un viaje caro: una dirección limpia genera confianza y una
+# con signos de interrogación parece un enlace de rastreo.
+#
+# En local no hay Apache, así que durante el desarrollo se usa /viaje/?v=token.
+# El código lee las dos formas sin cambios.
+
+RewriteEngine On
+
+# Si lo que se pide existe de verdad (index.html, css/, js/), se sirve tal cual.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([A-Za-z0-9_-]+)/?$ index.html?v=$1 [L,QSA]
