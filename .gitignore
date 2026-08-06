@@ -1,21 +1,39 @@
-# Reporte académico de estadías — NO publicar en repo público
-# (los detectores de plagio de la universidad podrían marcarlo como copiado de internet)
-reporte-estadias/
+# ============================================================
+#  NUNCA subir al repositorio (es público)
+# ============================================================
 
-# Documentos PDF (incluye material de terceros que no debe distribuirse)
+# --- Documentos académicos --------------------------------
+# El reporte de estadías no debe quedar indexable en internet: los
+# detectores de plagio de la universidad podrían marcarlo como copiado.
+reporte-estadias/
+*.docx
+*.doc
 *.pdf
 
-# Originales de marca del cliente (alta resolución). El sitio solo necesita
-# el emblema derivado en img/logo-emblema.png
+# --- Material del cliente ---------------------------------
+# Originales de marca en alta resolución. El sitio solo necesita el
+# emblema derivado, que sí vive en public/img/logo-emblema.png
 LOGOS POSIBLES/
 
-# Export pesado e inservible del prototipo (bundle de ~2 MB empaquetado en JS)
-prototipo/Tierra de Viajes (standalone).html
+# PDFs de itinerarios de clientes reales (datos personales).
+# Su lugar es Supabase Storage, nunca este repositorio.
+itinerarios/
+*-itinerario.*
 
-# Sistema operativo / editores
+# --- Credenciales -----------------------------------------
+# Cuando llegue Supabase: las claves de servicio y los .env NO se suben.
+# La clave publicable puede ir en el front (así está diseñada), pero la
+# seguridad debe descansar en las políticas RLS, no en ocultarla.
+.env
+.env.*
+*.key
+*.pem
+secrets.json
+config.local.js
+
+# --- Basura de build y sistema ----------------------------
+prototipo/Tierra de Viajes (standalone).html
+node_modules/
 .DS_Store
 Thumbs.db
 *.log
-
-# Dependencias (por si en el futuro se agregan)
-node_modules/

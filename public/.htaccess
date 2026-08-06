@@ -1,0 +1,77 @@
+# ============================================================
+#  Tierra de Viajes — configuración del servidor (Apache / LiteSpeed)
+#  Este archivo solo aplica en Hostinger. GitHub Pages lo ignora.
+# ============================================================
+
+# ---------- 1. Segunda línea de defensa ----------
+# La documentación del proyecto vive fuera de esta carpeta, así que en
+# condiciones normales nunca llega al servidor. Estas reglas existen por si
+# algún día el despliegue sube el repositorio completo por error.
+<FilesMatch "\.(md|markdown|docx?|xlsx?|log|bak|sql|env|yml|yaml|json)$">
+    Require all denied
+</FilesMatch>
+
+# Bloquear archivos y carpetas ocultas (.git, .env, .github…)
+RedirectMatch 404 /\.(?!well-known)
+
+# No listar el contenido de las carpetas que no tengan índice
+Options -Indexes
+
+
+# ---------- 2. Cabeceras de seguridad ----------
+<IfModule mod_headers.c>
+    # Impide que el navegador adivine el tipo de archivo (evita que un
+    # archivo subido se interprete como script)
+    Header set X-Content-Type-Options "nosniff"
+
+    # Impide que el sitio se incruste en un iframe ajeno (clickjacking)
+    Header set X-Frame-Options "SAMEORIGIN"
+
+    # Limita la información del referente que se envía a terceros
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Desactiva APIs del navegador que este sitio no usa
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+
+    # Fuerza HTTPS durante un año en visitas posteriores
+    Header set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+</IfModule>
+
+
+# ---------- 3. Forzar HTTPS ----------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+</IfModule>
+
+
+# ---------- 4. Rendimiento (importante: el tráfico viene de anuncios) ----------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css               "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/webp             "access plus 1 year"
+    ExpiresByType image/png              "access plus 1 year"
+    ExpiresByType image/jpeg             "access plus 1 year"
+    # El HTML no se cachea tanto: así los cambios se ven pronto
+    ExpiresByType text/html              "access plus 1 hour"
+</IfModule>
+
+
+# ---------- 5. Página del itinerario (fase 2, aún sin construir) ----------
+# Cuando exista /viaje/, descomentar para servir URLs limpias del tipo
+# tudominio.com/viaje/xY7k2Lp9  (ver docs/sistema-itinerarios/PLAN-DE-TRABAJO.md §2.1)
+#
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond %{REQUEST_URI} ^/viaje/
+#     RewriteCond %{REQUEST_FILENAME} !-f
+#     RewriteCond %{REQUEST_FILENAME} !-d
+#     RewriteRule ^viaje/([A-Za-z0-9_-]+)/?$ /viaje/index.html?v=$1 [L,QSA]
+# </IfModule>
