@@ -6,83 +6,33 @@
 
 import { cliente } from './sesion.js';
 import { nombreParaSaludar } from '../../js/comun.js';
-
-const AVISO_MB = 8;    // a partir de aquí se avisa: descargarlo con datos en el extranjero duele
-const TOPE_MB  = 25;   // tope duro, el mismo que tiene el bucket
-
-// ------------------------------------------------------------------ utilidades
-
-// Token de la URL del cliente. 24 caracteres del alfabeto seguro para URLs
-// (64 símbolos = 6 bits por carácter → 144 bits de azar). El plan pide 21 o más.
-// Se usa crypto, no Math.random: este token ES la credencial de acceso.
-function generarToken(longitud = 24) {
-  const alfabeto = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
-  const bytes = crypto.getRandomValues(new Uint8Array(longitud));
-  let token = '';
-  for (const b of bytes) token += alfabeto[b & 63];
-  return token;
-}
-
-// Caducidad: fecha de fin + 3 meses (decisión de Karla, CONTEXTO.md §7.1).
-// Sin fechas, el respaldo son 6 meses desde hoy: ningún registro se queda sin caducar.
-function calcularCaducidad(fechaFin) {
-  const base = fechaFin ? new Date(`${fechaFin}T12:00:00`) : new Date();
-  const meses = fechaFin ? 3 : 6;
-  const caducidad = new Date(base);
-  caducidad.setMonth(caducidad.getMonth() + meses);
-  return caducidad.toISOString();
-}
-
-function urlDelItinerario(token) {
-  // En local no hay reescritura de Apache, así que se usa ?v=. En el dominio
-  // real el .htaccess sirve la URL limpia. El lector del token soporta ambas.
-  return location.hostname === 'localhost' || location.hostname === '127.0.0.1'
-    ? `${location.origin}/viaje/?v=${token}`
-    : `${location.origin}/viaje/${token}`;
-}
-
-// Plantilla acordada en CONTEXTO.md §7.2. Karla la edita antes de mandarla.
-// El saludo usa la misma función que la página del cliente (js/comun.js) para
-// que el mensaje de WhatsApp y la página digan el nombre igual.
-function mensajeWhatsApp(nombreCompleto, enlace) {
-  const nombre = nombreParaSaludar(nombreCompleto);
-  return `¡Hola ${nombre}! Ya quedó listo tu itinerario ✈️
-
-Aquí lo puedes ver y descargar:
-${enlace}
-
-Te recomiendo descargarlo antes de viajar para tenerlo aunque no tengas internet.
-Cualquier duda me escribes por aquí. ¡Ya falta poco!`;
-}
-
-async function copiar(texto, boton, textoOriginal) {
-  try {
-    await navigator.clipboard.writeText(texto);
-    boton.textContent = '¡Copiado!';
-  } catch {
-    boton.textContent = 'No se pudo copiar';
-  }
-  setTimeout(() => { boton.textContent = textoOriginal; }, 2000);
-}
+import { recargarLista } from './lista.js';
+import {
+  AVISO_MB, TOPE_MB,
+  generarToken, calcularCaducidad, urlDelItinerario,
+  mensajeWhatsApp, copiar,
+} from './itinerarios.js';
 
 // ------------------------------------------------------------------ elementos
-const form          = document.getElementById('form-itinerario');
-const vistaAlta     = document.getElementById('vista-alta');
+const form           = document.getElementById('form-itinerario');
+const vistaAlta      = document.getElementById('vista-alta');
 const vistaResultado = document.getElementById('vista-resultado');
-const campoPdf      = document.getElementById('pdf');
-const ayudaPdf      = document.getElementById('ayuda-pdf');
-const campoInicio   = document.getElementById('inicio');
-const campoFin      = document.getElementById('fin');
+const campoPdf       = document.getElementById('pdf');
+const ayudaPdf       = document.getElementById('ayuda-pdf');
+const campoInicio    = document.getElementById('inicio');
+const campoFin       = document.getElementById('fin');
 const ayudaCaducidad = document.getElementById('ayuda-caducidad');
-const cajaError     = document.getElementById('error-alta');
-const botonCrear    = document.getElementById('boton-crear');
+const cajaError      = document.getElementById('error-alta');
+const botonCrear     = document.getElementById('boton-crear');
 
-const resultadoIntro   = document.getElementById('resultado-intro');
-const enlaceGenerado   = document.getElementById('enlace-generado');
-const campoMensaje     = document.getElementById('mensaje');
+const resultadoIntro     = document.getElementById('resultado-intro');
+const enlaceGenerado     = document.getElementById('enlace-generado');
+const campoMensaje       = document.getElementById('mensaje');
 const botonCopiarEnlace  = document.getElementById('boton-copiar-enlace');
 const botonCopiarMensaje = document.getElementById('boton-copiar-mensaje');
-const botonOtro        = document.getElementById('boton-otro');
+const botonOtro          = document.getElementById('boton-otro');
+
+const AYUDA_PDF_INICIAL = `Solo PDF, hasta ${TOPE_MB} MB.`;
 
 function mostrarError(texto) {
   cajaError.textContent = texto;
@@ -98,11 +48,11 @@ function limpiarError() {
 // ------------------------------------------------------------------ avisos en vivo
 
 // El peso del PDF se avisa al elegirlo, no al enviar: si pesa 20 MB conviene
-// que Karla lo sepa antes de esperar la subida.
+// que Karla lo sepa antes de esperar toda la subida.
 campoPdf.addEventListener('change', () => {
   const archivo = campoPdf.files[0];
   if (!archivo) {
-    ayudaPdf.textContent = 'Solo PDF, hasta 25 MB.';
+    ayudaPdf.textContent = AYUDA_PDF_INICIAL;
     ayudaPdf.className = 'campo__ayuda';
     return;
   }
@@ -201,11 +151,13 @@ form.addEventListener('submit', async (evento) => {
   const enlace = urlDelItinerario(token);
   resultadoIntro.textContent = `El itinerario de ${nombre} ya está en línea. Mándaselo por WhatsApp.`;
   enlaceGenerado.textContent = enlace;
-  campoMensaje.value = mensajeWhatsApp(nombre, enlace);
+  campoMensaje.value = mensajeWhatsApp(nombreParaSaludar(nombre), enlace);
 
   vistaAlta.hidden = true;
   vistaResultado.hidden = false;
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  recargarLista();
 });
 
 // ------------------------------------------------------------------ resultado
@@ -218,13 +170,18 @@ botonCopiarMensaje.addEventListener('click', () => {
   copiar(campoMensaje.value, botonCopiarMensaje, 'Copiar mensaje');
 });
 
-botonOtro.addEventListener('click', () => {
+function volverAlAlta() {
   form.reset();
-  ayudaPdf.textContent = 'Solo PDF, hasta 25 MB.';
+  ayudaPdf.textContent = AYUDA_PDF_INICIAL;
   ayudaPdf.className = 'campo__ayuda';
+  limpiarError();
   refrescarCaducidad();
   vistaResultado.hidden = true;
   vistaAlta.hidden = false;
+}
+
+botonOtro.addEventListener('click', () => {
+  volverAlAlta();
   document.getElementById('cliente').focus();
 });
 

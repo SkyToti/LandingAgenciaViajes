@@ -146,13 +146,25 @@ Estas no estaban en el plan original; salieron al construir.
 
 ## 8. Lo que todavía no existe
 
-- **Lista de itinerarios en el panel** (Paso 4): hoy Karla puede crear, pero no ver lo
-  que creó, ni recopiar un enlace, ni revocar, ni reactivar.
-- **Botón de calendario** (Paso 6).
-- **Registro de última apertura** (Paso 7).
-- **Aviso de actualización al reemplazar el PDF** (Paso 7).
-- **SMTP propio**: sin esto Karla no puede entrar en producción. Ver
-  `PUESTA-EN-PRODUCCION.md`.
+**Los siete pasos del plan están construidos.** Lo único que falta para poder entregar
+es configuración, no código:
+
+- **SMTP propio.** Sin esto Karla no puede entrar en producción, porque el correo del
+  enlace mágico no le llegaría nunca. Ver `PUESTA-EN-PRODUCCION.md` §4.
+- **El dominio y el hosting**, con lo que empieza a funcionar la URL limpia.
+
+Decisiones ya tomadas que quedaron fuera a propósito: el **PIN** de 4 dígitos (Karla lo
+descartó), la **captura del día por día** (sube su PDF tal cual) y la **PWA**
+(el PDF descargado ya resuelve el modo sin conexión).
+
+## 8bis. Las dos capas que funcionan sin internet
+
+Son la respuesta del proyecto al "viajan sin señal", y ninguna necesita una app:
+
+1. **El PDF descargado.** Por eso la página insiste en descargarlo antes de viajar.
+2. **El evento del calendario.** El calendario del teléfono avisa solo, sin conexión, y
+   el evento lleva el enlace dentro. Salta tres días antes del viaje, que es cuando
+   todavía da tiempo de descargar el itinerario.
 
 ## 9. Deudas conocidas
 
@@ -167,5 +179,11 @@ Cosas que funcionan pero convendría mejorar. Se anotan para que no se olviden.
 3. **La cuenta de Karla tendrá contraseña aunque nunca se use.** El panel entra solo por
    enlace mágico, pero si la cuenta se crea con contraseña, esa contraseña sigue
    sirviendo para entrar por la API. Lo limpio es crear la cuenta sin contraseña.
-4. **Al borrar un itinerario habrá que borrar también su PDF.** El borrado todavía no
-   existe (llega en el Paso 4); cuando se construya, tiene que limpiar las dos cosas.
+4. **No hay borrado definitivo de itinerarios, solo revocar.** Es una decisión
+   defendible —revocar es reversible y borrar no—, pero significa que la tabla y el
+   bucket crecen para siempre. Si algún día se añade el borrado, tiene que limpiar
+   las dos cosas: el registro y el PDF.
+5. **Un registro sin PDF muestra un error poco claro.** Si un itinerario se queda sin
+   `pdf_path` (solo posible creándolo a mano, porque el formulario exige el archivo),
+   la página dice *"revisa tu conexión"* cuando el problema es otro. Caso improbable,
+   pero el mensaje miente.

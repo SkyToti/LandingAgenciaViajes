@@ -114,6 +114,24 @@
   max-width: 48ch;
 }
 
+/* ============================== CALENDARIO ============================== */
+.calendario {
+  border: 1px solid rgba(21, 35, 59, .16);
+  border-radius: 2px;
+  padding: clamp(1.6rem, 4vw, 2.4rem);
+  margin-bottom: clamp(2.5rem, 6vw, 3.5rem);
+}
+.calendario h2 {
+  font-size: var(--step-1);
+  color: var(--navy);
+  margin-bottom: .6rem;
+}
+.calendario p {
+  color: var(--ink-soft);
+  max-width: 46ch;
+  margin-bottom: 1.4rem;
+}
+
 /* ============================== EXTRAS ============================== */
 .extras { padding-bottom: clamp(2.5rem, 6vw, 3.5rem); }
 .extras__accion {
@@ -189,6 +207,7 @@
   .acciones,
   .visor,
   .offline,
+  .calendario,
   .extras,
   .contacto,
   .pie { display: none !important; }

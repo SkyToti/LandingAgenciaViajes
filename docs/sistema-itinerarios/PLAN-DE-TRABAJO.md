@@ -14,10 +14,13 @@
 
 ## 0. Estado
 
-**Al 2026-08-05: hechos los pasos 1, 2, 3 y 5. Faltan el 4, el 6 y el 7.**
-Karla ya puede entrar al panel, crear un itinerario y mandar el enlace; el cliente ya
-puede abrirlo, descargarlo e imprimirlo. Todo probado en local contra Supabase.
-El detalle de lo construido está en `COMO-FUNCIONA.md`.
+**Al 2026-08-05: los siete pasos están construidos y probados en local contra Supabase.**
+Karla puede entrar al panel, crear un itinerario, mandarlo, encontrarlo despues,
+recopiarlo, reemplazar el PDF, reactivarlo o revocarlo; el cliente puede abrirlo,
+descargarlo, imprimirlo con QR y guardarlo en su calendario.
+
+**Para entregar falta configuracion, no codigo:** el SMTP propio y el dominio.
+Ver `PUESTA-EN-PRODUCCION.md`. El detalle de lo construido esta en `COMO-FUNCIONA.md`.
 
 ### Estado original al escribir este documento
 
@@ -251,7 +254,7 @@ con la lista permitida.
   (plantilla en `CONTEXTO.md` §7.2, editable antes de enviar).
 - ✅ *Aceptación:* Karla completa el flujo en menos de 60 segundos y pega el mensaje en WhatsApp.
 
-### Paso 4 — Listar y administrar  ⏳ PENDIENTE
+### Paso 4 — Listar y administrar  ✅ HECHO
 - Lista de itinerarios: cliente, título, fecha, estado (activo / por caducar / caducado).
 - Acciones: recopiar enlace · recopiar mensaje · reemplazar PDF (sube `version`) ·
   **"Reactivar 3 meses más"** (un clic, §7.1) · revocar.
@@ -270,12 +273,12 @@ con la lista permitida.
 - ✅ *Aceptación:* abrir en un iPhone real y en un Android real; descargar el PDF con el
   nombre correcto; imprimir y que el QR devuelva a la misma página.
 
-### Paso 6 — Calendario (nivel 0)  ⏳ PENDIENTE
+### Paso 6 — Calendario (nivel 0)  ✅ HECHO
 - Botón "Agregar a mi calendario" → `.ics` con **un evento** que cubre el viaje,
   con el enlace en la descripción. Solo requiere las fechas.
 - ✅ *Aceptación:* el archivo abre en iOS y Android y crea el evento.
 
-### Paso 7 — Pulido  ⏳ PENDIENTE
+### Paso 7 — Pulido  ✅ HECHO
 - Aviso de actualización (§2.5): botón "copiar aviso" al reemplazar el PDF.
   *Baja prioridad:* Karla confirmó que el itinerario casi nunca cambia tras entregarse.
 - Métrica mínima: "última apertura" (útil para que Karla sepa si el cliente ya lo vio).

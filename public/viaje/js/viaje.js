@@ -7,6 +7,7 @@
 
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, llamarRpc } from '../../js/supabase-config.js';
 import { nombreParaSaludar, formatearFecha, formatearRango } from '../../js/comun.js';
+import { construirIcs, nombreDelArchivo, descargarIcs } from './calendario.js';
 
 const WHATSAPP_KARLA = '527774448065';
 
@@ -183,6 +184,11 @@ if (!token) {
     } else {
       pintar(itinerario, token);
 
+      // Deja constancia de que el cliente sí abrió su itinerario, para que Karla
+      // pueda saberlo. Sin await y con el error tragado a propósito: esto es una
+      // estadística, y nunca debe estropearle la página a nadie.
+      llamarRpc('registrar_apertura', { p_token: token }).catch(() => {});
+
       const botonAbrir      = document.getElementById('boton-abrir');
       const botonDescargar  = document.getElementById('boton-descargar');
       const visor           = document.getElementById('visor');
@@ -236,6 +242,30 @@ if (!token) {
       });
 
       document.getElementById('boton-imprimir').addEventListener('click', () => window.print());
+
+      // El botón de calendario solo aparece si hay fechas: sin ellas no hay
+      // evento que crear, y un botón que no hace nada es peor que no tenerlo.
+      if (itinerario.fecha_inicio || itinerario.fecha_fin) {
+        const seccion = document.getElementById('calendario');
+        seccion.hidden = false;
+
+        document.getElementById('boton-calendario').addEventListener('click', (evento) => {
+          const ics = construirIcs({
+            titulo: itinerario.titulo,
+            inicio: itinerario.fecha_inicio,
+            fin:    itinerario.fecha_fin,
+            enlace: urlCanonica(token),
+            token,
+          });
+          if (!ics) return;
+
+          descargarIcs(ics, nombreDelArchivo(itinerario.titulo));
+
+          const boton = evento.currentTarget;
+          boton.textContent = 'Listo, revisa tu calendario';
+          setTimeout(() => { boton.textContent = 'Agregar a mi calendario'; }, 3000);
+        });
+      }
     }
   } catch {
     mostrarProblema('error');

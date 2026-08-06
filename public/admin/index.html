@@ -89,6 +89,15 @@
 
     <div class="wrap panel__cuerpo">
 
+      <nav class="panel__nav">
+        <button type="button" class="panel__pestania panel__pestania--activa" data-vista="alta">
+          Nuevo itinerario
+        </button>
+        <button type="button" class="panel__pestania" data-vista="lista">
+          Mis itinerarios
+        </button>
+      </nav>
+
       <!-- ALTA -->
       <div id="vista-alta">
         <p class="label">Nuevo</p>
@@ -177,6 +186,28 @@
         </div>
       </div>
 
+      <!-- LISTA -->
+      <div id="vista-lista" hidden>
+        <p class="label">Todos</p>
+        <h1 class="panel__titulo">Tus <em>itinerarios</em></h1>
+
+        <div class="campo campo--buscador">
+          <label for="buscador">Buscar</label>
+          <input type="search" id="buscador" autocomplete="off"
+                 placeholder="Nombre del cliente o del viaje" />
+        </div>
+
+        <p class="lista__aviso" id="lista-cargando">Cargando…</p>
+        <p class="lista__aviso lista__aviso--error" id="error-lista" role="alert" hidden></p>
+        <p class="lista__aviso" id="lista-vacia" hidden></p>
+
+        <div class="lista" id="lista-itinerarios"></div>
+      </div>
+
+      <!-- Un solo campo de archivo para todos los reemplazos: se dispara desde
+           el botón de la tarjeta que toque. -->
+      <input type="file" id="reemplazo-pdf" accept="application/pdf" hidden />
+
     </div>
   </section>
 
@@ -186,5 +217,6 @@
 <script src="js/vendor/supabase.js"></script>
 <script type="module" src="js/sesion.js"></script>
 <script type="module" src="js/panel.js"></script>
+<script type="module" src="js/navegacion.js"></script>
 </body>
 </html>

@@ -319,6 +319,141 @@
 }
 .resultado__otro:hover { color: var(--gold-deep); }
 
+/* ============================== PESTAÑAS ============================== */
+.panel__nav {
+  display: flex;
+  gap: .4rem;
+  flex-wrap: wrap;
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+  border-bottom: 1px solid rgba(21, 35, 59, .14);
+}
+.panel__pestania {
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: .7rem 1.1rem;
+  margin-bottom: -1px;
+  font: inherit;
+  font-size: var(--step-0);
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: color .3s, border-color .3s;
+}
+.panel__pestania:hover { color: var(--navy); }
+.panel__pestania--activa { color: var(--navy); border-bottom-color: var(--gold); }
+
+/* ============================== BUSCADOR ============================== */
+.campo--buscador { max-width: 26rem; margin-bottom: clamp(1.6rem, 4vw, 2.4rem); }
+.campo--buscador input[type="search"] {
+  width: 100%;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: var(--step-0);
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid rgba(21, 35, 59, .2);
+  border-radius: 999px;
+  padding: .7rem 1.2rem;
+}
+.campo--buscador input[type="search"]:focus { outline: none; border-color: var(--gold-deep); }
+
+/* ============================== LISTA ============================== */
+.lista__aviso { color: var(--ink-soft); font-size: var(--step-0); padding: 1rem 0; }
+.lista__aviso--error { color: var(--red); border-left: 3px solid var(--red); padding-left: .9rem; }
+
+.lista { display: grid; gap: 1rem; }
+
+/* Tarjetas y no tabla: en el celular una tabla obliga a desplazarse en
+   horizontal, y Karla también abre esto desde el teléfono. */
+.itin {
+  background: #fff;
+  border-left: 3px solid var(--gold);
+  border-radius: 2px;
+  padding: clamp(1.2rem, 3vw, 1.6rem);
+}
+.itin--caducado,
+.itin--revocado { border-left-color: rgba(21, 35, 59, .2); }
+.itin--por_caducar { border-left-color: var(--red); }
+
+.itin__estado {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  padding: .2rem .7rem;
+  border-radius: 999px;
+  margin-bottom: .7rem;
+}
+.itin__estado--activo      { background: rgba(224, 165, 38, .16); color: var(--gold-deep); }
+.itin__estado--por_caducar { background: rgba(194, 54, 47, .12);  color: var(--red); }
+.itin__estado--caducado,
+.itin__estado--revocado    { background: rgba(21, 35, 59, .08);   color: var(--ink-soft); }
+
+.itin__cliente {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: var(--step-1);
+  font-weight: 400;
+  color: var(--navy);
+  line-height: 1.15;
+}
+.itin__titulo { color: var(--ink); font-weight: 500; margin-top: .15rem; }
+.itin__meta,
+.itin__version { font-size: var(--step--1); color: var(--ink-soft); margin-top: .35rem; }
+
+.itin__apertura {
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+  margin-top: .5rem;
+}
+/* Que el cliente ya lo haya abierto es buena noticia: se marca en dorado. */
+.itin__apertura--visto { color: var(--gold-deep); font-weight: 600; }
+
+.itin__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(21, 35, 59, .1);
+}
+.itin__accion {
+  background: none;
+  border: 1px solid rgba(21, 35, 59, .22);
+  border-radius: 999px;
+  padding: .45rem 1rem;
+  font: inherit;
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+  transition: border-color .3s, background .3s, color .3s;
+}
+.itin__accion:hover { border-color: var(--navy); background: rgba(21, 35, 59, .04); }
+.itin__accion[disabled] { opacity: .5; cursor: progress; }
+.itin__accion--destacada { border-color: var(--gold-deep); color: var(--gold-deep); }
+.itin__accion--destacada:hover { background: rgba(224, 165, 38, .12); border-color: var(--gold-deep); }
+.itin__accion--peligro { border-color: rgba(194, 54, 47, .35); color: var(--red); }
+.itin__accion--peligro:hover { background: rgba(194, 54, 47, .08); border-color: var(--red); }
+/* Mientras espera confirmación el botón cambia de texto; el color refuerza el aviso. */
+.itin__accion[data-confirmando="si"] { background: var(--red); border-color: var(--red); color: #fff; }
+
+.itin__aviso {
+  margin-top: .9rem;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  flex-wrap: wrap;
+}
+
+/* En el celular los botones de la tarjeta se pulsan con el pulgar: por debajo de
+   44 px de alto se falla el toque y se acaba revocando lo que no era. */
+@media (max-width: 640px) {
+  .itin__accion { padding: .7rem 1.1rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn--oro:hover,
   .btn--marino:hover { transform: none; }
