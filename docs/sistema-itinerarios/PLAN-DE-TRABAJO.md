@@ -109,15 +109,34 @@ gratuito de Supabase al momento de construir (cambian).
 
 ## 3. Orden de construcción (cada paso entrega algo funcionando)
 
-### Paso 0 — Prerrequisitos (necesita al usuario, no a Claude)
-- [ ] Crear proyecto en Supabase y guardar URL + clave publicable.
-- [x] ~~Decidir la ruta~~ → **decidido:** `.htaccess` en Hostinger, URL limpia (§2.1).
-- [ ] Contratar dominio + hosting en Hostinger y **activar el SSL gratuito**
-      (el sitio debe servirse por HTTPS; algunas APIs del navegador no funcionan sin él).
-- [ ] **Dirección de correo de Karla** (solo la dirección: el acceso es por enlace mágico,
-      nunca se necesita entrar a su bandeja ni conocer su contraseña). Debe ser un correo
-      que solo ella controle y revise a diario.
-- [x] ~~Responder las preguntas para Karla~~ → **contestadas**, ver `CONTEXTO.md` §7.
+### Paso 0 — Prerrequisitos
+
+> **El hosting NO bloquea el desarrollo.** Los pasos 1 a 7 se construyen y se prueban
+> en local contra Supabase, que es un servicio independiente del hosting. Solo la
+> publicación final necesita el dominio contratado. No esperar por él.
+
+**Bloqueante — se necesita antes de escribir código:**
+- [ ] Proyecto de Supabase creado; guardar la URL y la clave publicable.
+      Lo puede crear el desarrollador con su propia cuenta.
+      ⚠️ Prever la titularidad: si el proyecto vive en la cuenta personal del
+      desarrollador, la agencia perdería el acceso el día que la relación termine.
+      Supabase permite transferir proyectos entre organizaciones; acordarlo desde
+      el inicio o crearlo directamente en una cuenta de la agencia.
+
+**No bloqueante — se resuelve más adelante:**
+- [ ] Correo de Karla para el acceso al panel. Durante el desarrollo se puede probar
+      el enlace mágico con el correo del propio desarrollador; el de ella se registra
+      al entregar. (Solo se necesita la dirección, nunca el acceso a su bandeja.)
+- [ ] Dominio y hosting en Hostinger (plan **Single**, ya elegido por la clienta) con
+      el SSL gratuito activado. Necesario únicamente para publicar.
+
+**Ya cerrado:**
+- [x] Ruta de los itinerarios → `.htaccess` con URL limpia (§2.1).
+      En local `.htaccess` no aplica, así que durante el desarrollo se usa la forma
+      `?v=token`. El código de lectura del token de §2.1 ya soporta ambas sin cambios.
+- [x] Preguntas de producto para Karla → contestadas, ver `CONTEXTO.md` §7.
+- [x] Estructura del repositorio → el sitio vive en `public/`; el portal se construye
+      dentro de `public/admin/` y `public/viaje/`.
 
 ### Paso 1 — Base de datos y almacenamiento
 - Tabla `itinerarios` (esquema en `CONTEXTO.md` §3, más `version` y `updated_at` por §2.5).
