@@ -173,6 +173,15 @@ function fallo(mensaje) {
 
 const token = leerToken();
 
+// Si se llegó aquí por el reenvío de la página 404 (GitHub Pages, que no tiene
+// reescritura de direcciones), la barra del navegador quedó con ?v=token.
+// Se restaura la forma limpia para que el cliente vea —y pueda volver a
+// compartir— la misma dirección que le mandó Karla.
+if (token && new URLSearchParams(location.search).get('v')) {
+  const limpia = urlCanonica(token);
+  if (limpia !== location.href) history.replaceState(null, '', limpia);
+}
+
 if (!token) {
   mostrarProblema('no_encontrado');
 } else {

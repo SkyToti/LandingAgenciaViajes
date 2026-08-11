@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tierra de Viajes by Fraveo</title>
+<meta name="robots" content="noindex, nofollow" />
+
+<!-- GitHub Pages no tiene reescritura de direcciones: ni .htaccess ni _redirects.
+     Cuando alguien abre /viaje/xY7k2Lp9, el servidor no encuentra ese archivo y
+     sirve esta página. Aquí se recupera el token de la dirección y se reenvía a
+     la página del itinerario, que ya sabe leerlo del parámetro "v".
+
+     El reenvío ocurre antes de pintar nada para que el cliente no vea un parpadeo
+     ni un mensaje de error que no le corresponde. -->
+<script>
+(function () {
+  var partes = location.pathname.split('/').filter(Boolean);
+  // Debe ser exactamente /viaje/{token}, y el token con la forma que genera el panel.
+  if (partes.length === 2 && partes[0] === 'viaje' && /^[A-Za-z0-9_-]{21,64}$/.test(partes[1])) {
+    location.replace('/viaje/?v=' + encodeURIComponent(partes[1]) + location.hash);
+  }
+})();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/css/styles.css" />
+
+<style>
+  /* Página de dirección no encontrada. Reutiliza la paleta y las tipografías
+     del sistema de diseño; no define ningún color propio. */
+  body { background: var(--navy); min-height: 100svh; display: flex; }
+  .perdido { margin: auto; width: min(90%, 34rem); padding: clamp(3rem, 9vh, 6rem) 0; color: var(--cream); }
+  .perdido .logo { color: #fff; margin-bottom: clamp(2.5rem, 7vh, 4rem); }
+  .perdido h1 { font-size: clamp(2rem, 1.4rem + 2.6vw, 3.2rem); color: #fff; margin-bottom: 1.2rem; max-width: 16ch; }
+  .perdido h1 em { color: var(--gold); }
+  .perdido p { color: rgba(247,242,233,.78); font-size: var(--step-1); max-width: 38ch; margin-bottom: 2.4rem; }
+  .perdido .btn { background: var(--gold); color: var(--navy); padding: .9rem 2rem; }
+</style>
+</head>
+<body>
+
+<div class="perdido">
+  <div class="logo">
+    <img class="logo__mark" src="/img/logo-emblema.png" alt="" width="256" height="256" />
+    <span>Tierra de Viajes<small>by Fraveo</small></span>
+  </div>
+
+  <h1>Esta dirección no <em>existe</em></h1>
+  <p>
+    Puede que el enlace se haya cortado al copiarlo. Revisa que esté completo,
+    o vuelve al inicio para ver los viajes.
+  </p>
+  <a class="btn" href="/">Ir al inicio</a>
+</div>
+
+</body>
+</html>
