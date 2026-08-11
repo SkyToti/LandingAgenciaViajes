@@ -1,0 +1,13 @@
+# URL limpia de los itinerarios en Netlify y Cloudflare Pages.
+#
+# Hace lo mismo que public/viaje/.htaccess hace en Apache (Hostinger):
+# servir la pagina del itinerario y dejar el token en el parametro "v",
+# para que /viaje/xY7k2Lp9 funcione sin ser un archivo real.
+#
+# El 200 del final significa reescritura, no redireccion: la direccion
+# que ve el cliente en su navegador sigue siendo la limpia.
+#
+# :token captura un solo segmento, asi que /viaje/css/viaje.css y
+# /viaje/js/viaje.js no coinciden con esta regla y se sirven normal.
+
+/viaje/:token   /viaje/index.html?v=:token   200
