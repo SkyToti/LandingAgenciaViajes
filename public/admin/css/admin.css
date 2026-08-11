@@ -1,0 +1,460 @@
+/* Panel de Karla — sólo lo que un panel necesita.
+   La paleta, la escala tipográfica, las tipografías y .btn vienen de ../../css/styles.css.
+   Aquí no se define ningún color nuevo: todo sale de las variables de la landing. */
+
+.admin { background: var(--navy); }
+.admin__main { min-height: 100svh; display: flex; flex-direction: column; }
+.pantalla[hidden] { display: none; }
+.pantalla { flex: 1; display: flex; flex-direction: column; }
+
+.admin__cargando {
+  margin: auto;
+  color: rgba(247, 242, 233, .55);
+  font-family: "Fraunces", Georgia, serif;
+  font-style: italic;
+  font-size: var(--step-1);
+}
+
+/* ============================== ACCESO ============================== */
+/* Pantalla completa en marino: se lee de inmediato como "esto es privado". */
+.acceso {
+  margin: auto;
+  width: min(90%, 34rem);
+  padding: clamp(3rem, 9vh, 6rem) 0;
+  color: var(--cream);
+}
+.acceso .logo { color: #fff; margin-bottom: clamp(2.5rem, 7vh, 4.5rem); }
+
+.acceso h1 {
+  font-size: clamp(2.1rem, 1.4rem + 3vw, 3.4rem);
+  color: #fff;
+  margin: 1rem 0 1.2rem;
+}
+.acceso h1 em { color: var(--gold); }
+
+.acceso__intro {
+  color: rgba(247, 242, 233, .78);
+  max-width: 34ch;
+  margin-bottom: clamp(2rem, 5vh, 3rem);
+}
+.acceso__intro b { color: #fff; font-weight: 600; }
+
+.acceso__nota {
+  font-size: var(--step--1);
+  color: rgba(247, 242, 233, .55);
+  max-width: 40ch;
+  line-height: 1.7;
+  border-top: 1px solid rgba(247, 242, 233, .16);
+  padding-top: 1.4rem;
+}
+.acceso__nota b { color: rgba(247, 242, 233, .82); font-weight: 600; }
+
+/* --- formulario --- */
+.acceso__form { display: flex; flex-direction: column; gap: .7rem; }
+
+.acceso__form label {
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* Campo grande y de una sola línea: el público de este proyecto no es techie
+   y el panel se abre tanto en escritorio como en el celular. */
+.acceso__form input {
+  width: 100%;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: var(--step-1);
+  color: #fff;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(247, 242, 233, .3);
+  padding: .6rem 0;
+  transition: border-color .35s var(--ease);
+}
+.acceso__form input::placeholder { color: rgba(247, 242, 233, .3); }
+.acceso__form input:focus {
+  outline: none;
+  border-bottom-color: var(--gold);
+}
+/* El foco también tiene que verse para quien navega con teclado. */
+.acceso__form input:focus-visible { border-bottom-width: 2px; }
+
+.acceso__form .btn { margin-top: 1.6rem; align-self: flex-start; }
+
+/* Variante dorada de .btn: el marino de la landing desaparecería sobre este fondo. */
+.btn--oro {
+  background: var(--gold);
+  color: var(--navy);
+  padding: .8rem 1.9rem;
+  box-shadow: 0 10px 30px -16px rgba(224, 165, 38, .8);
+}
+.btn--oro:hover { box-shadow: 0 22px 44px -20px rgba(224, 165, 38, .85); }
+.btn--oro[disabled] {
+  opacity: .55;
+  cursor: progress;
+  transform: none;
+  box-shadow: none;
+}
+
+.acceso__error {
+  margin-top: 1.4rem;
+  color: #FFB9B4;
+  font-size: var(--step--1);
+  border-left: 2px solid var(--red);
+  padding-left: .9rem;
+  line-height: 1.6;
+}
+
+.acceso__volver {
+  margin-top: 2rem;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: var(--step--1);
+  color: rgba(247, 242, 233, .6);
+  text-decoration: underline;
+  text-underline-offset: .3em;
+  cursor: pointer;
+  transition: color .3s;
+}
+.acceso__volver:hover { color: var(--gold); }
+
+/* ============================== PANEL ============================== */
+/* Dentro del panel se trabaja: fondo crema, como el resto del sitio. */
+.pantalla[data-pantalla="panel"] { background: var(--cream); }
+
+.panel__top {
+  background: var(--navy);
+  padding: 1.1rem 0;
+}
+.panel__top-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.panel__top .logo { font-size: clamp(1.1rem, .9rem + .8vw, 1.5rem); }
+
+.panel__sesion {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  font-size: var(--step--1);
+  color: rgba(247, 242, 233, .6);
+  flex-wrap: wrap;
+}
+.panel__salir {
+  background: none;
+  border: 1px solid rgba(247, 242, 233, .3);
+  border-radius: 999px;
+  padding: .4rem 1.1rem;
+  font: inherit;
+  font-size: var(--step--1);
+  color: var(--cream);
+  cursor: pointer;
+  transition: border-color .3s, color .3s;
+}
+.panel__salir:hover { border-color: var(--gold); color: var(--gold); }
+
+.panel__cuerpo { padding: clamp(2.5rem, 7vw, 5rem) 0; }
+.panel__titulo {
+  font-size: var(--step-2);
+  margin: 1rem 0 1.4rem;
+  color: var(--navy);
+}
+.panel__titulo em { color: var(--gold-deep); }
+.panel__pendiente { color: var(--ink-soft); max-width: 46ch; }
+
+.panel__intro { color: var(--ink-soft); max-width: 50ch; margin-bottom: clamp(2.5rem, 6vw, 4rem); }
+
+/* ============================== FORMULARIO ============================== */
+.formulario { max-width: 34rem; display: flex; flex-direction: column; gap: clamp(1.6rem, 4vw, 2.2rem); }
+
+.campo { display: flex; flex-direction: column; gap: .45rem; }
+
+.campo label,
+.campo__etiqueta {
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.campo input[type="text"],
+.campo textarea {
+  width: 100%;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: var(--step-1);
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(21, 35, 59, .22);
+  padding: .5rem 0;
+  transition: border-color .35s var(--ease);
+}
+.campo input[type="text"]::placeholder { color: rgba(27, 36, 51, .28); }
+.campo input[type="text"]:focus,
+.campo textarea:focus { outline: none; border-bottom-color: var(--gold-deep); border-bottom-width: 2px; }
+
+.campo__ayuda { font-size: var(--step--1); color: var(--ink-soft); line-height: 1.6; max-width: 46ch; }
+.campo__ayuda--ok     { color: var(--gold-deep); font-weight: 600; }
+.campo__ayuda--aviso  { color: var(--gold-deep); }
+.campo__ayuda--error  { color: var(--red); font-weight: 600; }
+
+/* --- tipo de entrega --- */
+.opciones { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: .3rem; }
+.opcion {
+  display: inline-flex; align-items: center; gap: .55rem;
+  padding: .6rem 1.2rem;
+  border: 1px solid rgba(21, 35, 59, .2);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color .3s, background .3s;
+}
+/* La etiqueta interior no hereda el versalitas del label del campo. */
+.opcion span {
+  font-size: var(--step-0);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+}
+.opcion:has(input:checked) { border-color: var(--gold-deep); background: rgba(224, 165, 38, .1); }
+.opcion input { accent-color: var(--gold-deep); }
+
+/* --- fechas: destacadas porque de ellas dependen la caducidad y el calendario --- */
+.campo--fechas {
+  background: #fff;
+  border-left: 3px solid var(--gold);
+  padding: clamp(1.2rem, 3vw, 1.6rem);
+  border-radius: 2px;
+}
+.fechas { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: .5rem 0 .8rem; }
+.fechas label {
+  display: inline-flex; align-items: center; gap: .6rem;
+  font-size: var(--step-0);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-soft);
+}
+.fechas input[type="date"] {
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: var(--step-0);
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid rgba(21, 35, 59, .22);
+  border-radius: 4px;
+  padding: .5rem .7rem;
+}
+.fechas input[type="date"]:focus { outline: none; border-color: var(--gold-deep); }
+
+/* --- archivo --- */
+.campo input[type="file"] {
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+  padding: .8rem 0;
+}
+.campo input[type="file"]::file-selector-button {
+  font: inherit;
+  font-weight: 600;
+  color: var(--cream);
+  background: var(--navy);
+  border: 0;
+  border-radius: 999px;
+  padding: .6rem 1.3rem;
+  margin-right: 1rem;
+  cursor: pointer;
+  transition: opacity .3s;
+}
+.campo input[type="file"]::file-selector-button:hover { opacity: .88; }
+
+.formulario__error {
+  color: var(--red);
+  font-size: var(--step-0);
+  border-left: 3px solid var(--red);
+  padding: .3rem 0 .3rem .9rem;
+  line-height: 1.6;
+}
+
+/* Variante de .btn con relleno simétrico: el de la landing reserva sitio
+   para el círculo verde de WhatsApp, que aquí no existe. */
+.btn--marino { padding: .8rem 1.9rem; align-self: flex-start; }
+.btn--marino[disabled] { opacity: .55; cursor: progress; transform: none; box-shadow: none; }
+
+/* ============================== RESULTADO ============================== */
+.resultado__enlace {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  background: #fff;
+  border-left: 3px solid var(--gold);
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+  border-radius: 2px;
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+  max-width: 44rem;
+}
+.resultado__enlace code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: var(--step-0);
+  color: var(--navy);
+  word-break: break-all;
+  flex: 1 1 18rem;
+}
+
+.campo--mensaje { max-width: 44rem; }
+.campo--mensaje textarea { resize: vertical; font-size: var(--step-0); line-height: 1.7; }
+
+.resultado__acciones { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1.2rem; }
+.resultado__otro {
+  background: none; border: 0; padding: 0;
+  font: inherit; font-size: var(--step--1);
+  color: var(--ink-soft);
+  text-decoration: underline; text-underline-offset: .3em;
+  cursor: pointer; transition: color .3s;
+}
+.resultado__otro:hover { color: var(--gold-deep); }
+
+/* ============================== PESTAÑAS ============================== */
+.panel__nav {
+  display: flex;
+  gap: .4rem;
+  flex-wrap: wrap;
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+  border-bottom: 1px solid rgba(21, 35, 59, .14);
+}
+.panel__pestania {
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: .7rem 1.1rem;
+  margin-bottom: -1px;
+  font: inherit;
+  font-size: var(--step-0);
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: color .3s, border-color .3s;
+}
+.panel__pestania:hover { color: var(--navy); }
+.panel__pestania--activa { color: var(--navy); border-bottom-color: var(--gold); }
+
+/* ============================== BUSCADOR ============================== */
+.campo--buscador { max-width: 26rem; margin-bottom: clamp(1.6rem, 4vw, 2.4rem); }
+.campo--buscador input[type="search"] {
+  width: 100%;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: var(--step-0);
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid rgba(21, 35, 59, .2);
+  border-radius: 999px;
+  padding: .7rem 1.2rem;
+}
+.campo--buscador input[type="search"]:focus { outline: none; border-color: var(--gold-deep); }
+
+/* ============================== LISTA ============================== */
+.lista__aviso { color: var(--ink-soft); font-size: var(--step-0); padding: 1rem 0; }
+.lista__aviso--error { color: var(--red); border-left: 3px solid var(--red); padding-left: .9rem; }
+
+.lista { display: grid; gap: 1rem; }
+
+/* Tarjetas y no tabla: en el celular una tabla obliga a desplazarse en
+   horizontal, y Karla también abre esto desde el teléfono. */
+.itin {
+  background: #fff;
+  border-left: 3px solid var(--gold);
+  border-radius: 2px;
+  padding: clamp(1.2rem, 3vw, 1.6rem);
+}
+.itin--caducado,
+.itin--revocado { border-left-color: rgba(21, 35, 59, .2); }
+.itin--por_caducar { border-left-color: var(--red); }
+
+.itin__estado {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  padding: .2rem .7rem;
+  border-radius: 999px;
+  margin-bottom: .7rem;
+}
+.itin__estado--activo      { background: rgba(224, 165, 38, .16); color: var(--gold-deep); }
+.itin__estado--por_caducar { background: rgba(194, 54, 47, .12);  color: var(--red); }
+.itin__estado--caducado,
+.itin__estado--revocado    { background: rgba(21, 35, 59, .08);   color: var(--ink-soft); }
+
+.itin__cliente {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: var(--step-1);
+  font-weight: 400;
+  color: var(--navy);
+  line-height: 1.15;
+}
+.itin__titulo { color: var(--ink); font-weight: 500; margin-top: .15rem; }
+.itin__meta,
+.itin__version { font-size: var(--step--1); color: var(--ink-soft); margin-top: .35rem; }
+
+.itin__apertura {
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+  margin-top: .5rem;
+}
+/* Que el cliente ya lo haya abierto es buena noticia: se marca en dorado. */
+.itin__apertura--visto { color: var(--gold-deep); font-weight: 600; }
+
+.itin__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(21, 35, 59, .1);
+}
+.itin__accion {
+  background: none;
+  border: 1px solid rgba(21, 35, 59, .22);
+  border-radius: 999px;
+  padding: .45rem 1rem;
+  font: inherit;
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+  transition: border-color .3s, background .3s, color .3s;
+}
+.itin__accion:hover { border-color: var(--navy); background: rgba(21, 35, 59, .04); }
+.itin__accion[disabled] { opacity: .5; cursor: progress; }
+.itin__accion--destacada { border-color: var(--gold-deep); color: var(--gold-deep); }
+.itin__accion--destacada:hover { background: rgba(224, 165, 38, .12); border-color: var(--gold-deep); }
+.itin__accion--peligro { border-color: rgba(194, 54, 47, .35); color: var(--red); }
+.itin__accion--peligro:hover { background: rgba(194, 54, 47, .08); border-color: var(--red); }
+/* Mientras espera confirmación el botón cambia de texto; el color refuerza el aviso. */
+.itin__accion[data-confirmando="si"] { background: var(--red); border-color: var(--red); color: #fff; }
+
+.itin__aviso {
+  margin-top: .9rem;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  flex-wrap: wrap;
+}
+
+/* En el celular los botones de la tarjeta se pulsan con el pulgar: por debajo de
+   44 px de alto se falla el toque y se acaba revocando lo que no era. */
+@media (max-width: 640px) {
+  .itin__accion { padding: .7rem 1.1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn--oro:hover,
+  .btn--marino:hover { transform: none; }
+}

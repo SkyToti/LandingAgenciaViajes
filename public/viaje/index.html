@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tu itinerario · Tierra de Viajes</title>
+
+<!-- La vista previa que arma WhatsApp al pegar el enlace descarga esta página.
+     Por eso las etiquetas de abajo son genéricas y de marca: nunca el nombre del
+     cliente ni su destino (PLAN-DE-TRABAJO.md §2.2). Quien vea el chat por encima
+     del hombro no debe enterarse de nada. -->
+<meta property="og:title" content="Tu itinerario · Tierra de Viajes" />
+<meta property="og:description" content="Tu viaje, siempre a la mano." />
+<meta property="og:type" content="website" />
+<meta name="robots" content="noindex, nofollow" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="../css/styles.css" />
+<link rel="stylesheet" href="css/viaje.css" />
+</head>
+<body class="viaje">
+
+<!-- CARGANDO -->
+<section class="estado" data-estado="cargando">
+  <p class="estado__texto">Abriendo tu itinerario…</p>
+</section>
+
+<!-- ITINERARIO -->
+<main class="estado" data-estado="ok" hidden>
+
+  <header class="cabecera">
+    <div class="wrap cabecera__inner">
+      <div class="logo">
+        <img class="logo__mark" src="../img/logo-emblema.png" alt="" width="256" height="256" />
+        <span>Tierra de Viajes<small>by Fraveo</small></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <section class="saludo">
+      <p class="label">Tu viaje</p>
+      <h1 id="saludo-titulo"></h1>
+      <p class="saludo__fechas" id="saludo-fechas"></p>
+      <p class="saludo__actualizado" id="saludo-actualizado"></p>
+    </section>
+
+    <!-- Lo que el cliente vino a hacer, sin nada que estorbe alrededor -->
+    <section class="acciones">
+      <button type="button" class="btn btn--grande" id="boton-abrir">
+        Abrir mi itinerario
+      </button>
+      <button type="button" class="btn btn--grande btn--claro" id="boton-descargar">
+        Descargar
+      </button>
+      <p class="acciones__error" id="error-pdf" role="alert" hidden></p>
+    </section>
+
+    <!-- El visor solo aparece en pantallas grandes y bajo petición:
+         en iPhone el PDF incrustado sale en blanco (PLAN-DE-TRABAJO.md §2.3). -->
+    <section class="visor" id="visor" hidden>
+      <iframe id="visor-marco" title="Tu itinerario"></iframe>
+    </section>
+
+    <!-- El modo sin conexión de este proyecto es este consejo, no un service worker.
+         El PDF descargado lo entiende cualquiera y no se queda desactualizado
+         sin avisar (PLAN-DE-TRABAJO.md §4). -->
+    <section class="offline">
+      <h2>Antes de viajar, descárgalo</h2>
+      <p>
+        Guárdalo en tu celular mientras tengas internet. Así lo vas a poder abrir
+        en el viaje aunque no tengas señal ni WiFi.
+      </p>
+    </section>
+
+    <!-- El calendario del teléfono avisa solo y funciona sin internet: para quien
+         viaja con el roaming apagado es la capa más útil de todas. -->
+    <section class="calendario" id="calendario" hidden>
+      <h2>Que no se te olvide</h2>
+      <p>
+        Guarda las fechas en el calendario de tu teléfono. Te va a avisar tres días
+        antes y lleva este enlace dentro, por si lo necesitas.
+      </p>
+      <button type="button" class="btn btn--claro" id="boton-calendario">
+        Agregar a mi calendario
+      </button>
+    </section>
+
+    <section class="extras">
+      <button type="button" class="extras__accion" id="boton-imprimir">
+        Imprimir mi itinerario
+      </button>
+    </section>
+
+    <section class="contacto">
+      <h2>¿Algo cambió en tu viaje?</h2>
+      <p>Escríbeme y lo vemos. Estoy para ayudarte antes, durante y después.</p>
+      <a class="btn" id="boton-whatsapp" href="#">
+        Escribirle a Karla
+        <span class="wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg></span>
+      </a>
+    </section>
+
+    <!-- Solo se ve en papel: si pierdes la hoja, aquí está cómo volver. -->
+    <section class="solo-impresion" id="pie-impresion">
+      <p class="solo-impresion__titulo">Si pierdes este papel</p>
+      <p>Entra a esta dirección desde cualquier teléfono o computadora:</p>
+      <p class="solo-impresion__enlace" id="enlace-impreso"></p>
+      <div class="solo-impresion__qr" id="qr"></div>
+    </section>
+
+  </div>
+
+  <footer class="pie">
+    <div class="wrap">
+      <p>Tierra de Viajes <em>by Fraveo</em> · Diseño de viajes a Europa</p>
+    </div>
+  </footer>
+</main>
+
+<!-- ENLACE QUE NO LLEVA A NINGÚN LADO -->
+<!-- Los tres finales tristes comparten plantilla y cambian solo el texto.
+     Ninguno enseña un error técnico: siempre hay una salida y es Karla. -->
+<section class="estado estado--triste" data-estado="problema" hidden>
+  <div class="wrap triste">
+    <div class="logo logo--oscuro">
+      <img class="logo__mark" src="../img/logo-emblema.png" alt="" width="256" height="256" />
+      <span>Tierra de Viajes<small>by Fraveo</small></span>
+    </div>
+    <h1 id="triste-titulo"></h1>
+    <p id="triste-texto"></p>
+    <a class="btn" id="triste-whatsapp" href="#">
+      Escribirle a Karla
+      <span class="wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg></span>
+    </a>
+  </div>
+</section>
+
+<!-- Generador de QR (copia local). El código se dibuja aquí, en el navegador:
+     mandar el enlace a un servicio externo de QR sería entregarle a un tercero
+     la llave del itinerario del cliente. -->
+<script src="js/vendor/qrcode.js"></script>
+<script type="module" src="js/viaje.js"></script>
+</body>
+</html>

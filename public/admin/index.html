@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Panel · Tierra de Viajes</title>
+<!-- Zona privada: fuera de buscadores. -->
+<meta name="robots" content="noindex, nofollow" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<!-- El sistema de diseño de la landing, tal cual. admin.css solo añade lo que un panel necesita. -->
+<link rel="stylesheet" href="../css/styles.css" />
+<link rel="stylesheet" href="css/admin.css" />
+</head>
+<body class="admin">
+
+<main class="admin__main">
+
+  <!-- Mientras se comprueba si ya hay sesión abierta. Evita el parpadeo
+       de mostrar el formulario de acceso a quien ya entró. -->
+  <section class="pantalla" data-pantalla="cargando" hidden>
+    <p class="admin__cargando">Un momento…</p>
+  </section>
+
+  <!-- ACCESO -->
+  <section class="pantalla" data-pantalla="acceso" hidden>
+    <div class="acceso">
+      <div class="logo">
+        <img class="logo__mark" src="../img/logo-emblema.png" alt="" width="256" height="256" />
+        <span>Tierra de Viajes<small>by Fraveo</small></span>
+      </div>
+
+      <p class="label light">Zona privada</p>
+      <h1>El panel de <em>Karla</em></h1>
+      <p class="acceso__intro">
+        Escribe tu correo y te mando un enlace para entrar.
+        No hay contraseña que recordar.
+      </p>
+
+      <form class="acceso__form" id="form-acceso" novalidate>
+        <label for="correo">Tu correo</label>
+        <input
+          type="email" id="correo" name="correo"
+          autocomplete="email" inputmode="email"
+          placeholder="karla@ejemplo.com" required />
+
+        <button type="submit" class="btn btn--oro" id="boton-enviar">
+          Enviarme el enlace
+        </button>
+      </form>
+
+      <p class="acceso__error" id="error-acceso" role="alert" hidden></p>
+    </div>
+  </section>
+
+  <!-- CORREO ENVIADO -->
+  <section class="pantalla" data-pantalla="enviado" hidden>
+    <div class="acceso">
+      <p class="label light">Ya casi</p>
+      <h1>Te mandé un <em>correo</em></h1>
+      <p class="acceso__intro">
+        Va para <b id="correo-enviado"></b>. Ábrelo y toca el enlace de adentro.
+      </p>
+      <p class="acceso__nota">
+        Ábrelo <b>en este mismo dispositivo</b>: el enlace abre la sesión donde lo toques.
+        Si no aparece en unos minutos, revisa la carpeta de spam.
+      </p>
+      <button type="button" class="acceso__volver" id="boton-volver">Usar otro correo</button>
+    </div>
+  </section>
+
+  <!-- PANEL (el contenido llega en el Paso 3) -->
+  <section class="pantalla" data-pantalla="panel" hidden>
+    <header class="panel__top">
+      <div class="wrap panel__top-inner">
+        <div class="logo logo--oscuro">
+          <img class="logo__mark" src="../img/logo-emblema.png" alt="" width="256" height="256" />
+          <span>Tierra de Viajes<small>by Fraveo</small></span>
+        </div>
+        <div class="panel__sesion">
+          <span id="correo-sesion"></span>
+          <button type="button" class="panel__salir" id="boton-salir">Cerrar sesión</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap panel__cuerpo">
+
+      <nav class="panel__nav">
+        <button type="button" class="panel__pestania panel__pestania--activa" data-vista="alta">
+          Nuevo itinerario
+        </button>
+        <button type="button" class="panel__pestania" data-vista="lista">
+          Mis itinerarios
+        </button>
+      </nav>
+
+      <!-- ALTA -->
+      <div id="vista-alta">
+        <p class="label">Nuevo</p>
+        <h1 class="panel__titulo">Entregar un <em>itinerario</em></h1>
+        <p class="panel__intro">
+          Sube el PDF como lo tengas. El sistema no toca su contenido:
+          solo le pone un enlace bonito que tu cliente nunca va a perder.
+        </p>
+
+        <form class="formulario" id="form-itinerario" novalidate>
+
+          <div class="campo">
+            <label for="cliente">Nombre del cliente</label>
+            <input type="text" id="cliente" name="cliente" autocomplete="off"
+                   placeholder="Ana y Luis" required />
+          </div>
+
+          <div class="campo">
+            <label for="titulo">Título del viaje</label>
+            <input type="text" id="titulo" name="titulo" autocomplete="off"
+                   placeholder="Italia de Ana y Luis" required />
+            <p class="campo__ayuda">Es lo que tu cliente va a ver como encabezado de su página.</p>
+          </div>
+
+          <div class="campo">
+            <span class="campo__etiqueta">¿Qué le entregas?</span>
+            <div class="opciones">
+              <label class="opcion">
+                <input type="radio" name="tipo" value="viaje" checked />
+                <span>Un viaje</span>
+              </label>
+              <label class="opcion">
+                <input type="radio" name="tipo" value="asesoria" />
+                <span>Una asesoría</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Las fechas van destacadas a propósito: de ellas dependen la caducidad
+               del enlace y el botón de calendario (CONTEXTO.md §7.1). -->
+          <div class="campo campo--fechas">
+            <span class="campo__etiqueta">Fechas del viaje</span>
+            <div class="fechas">
+              <label for="inicio">Del <input type="date" id="inicio" name="inicio" /></label>
+              <label for="fin">Al <input type="date" id="fin" name="fin" /></label>
+            </div>
+            <p class="campo__ayuda" id="ayuda-caducidad">
+              De aquí salen el botón de calendario y la caducidad del enlace.
+              Si las dejas vacías, el enlace caduca en 6 meses.
+            </p>
+          </div>
+
+          <div class="campo">
+            <label for="pdf">El PDF del itinerario</label>
+            <input type="file" id="pdf" name="pdf" accept="application/pdf" required />
+            <p class="campo__ayuda" id="ayuda-pdf">Solo PDF, hasta 25 MB.</p>
+          </div>
+
+          <p class="formulario__error" id="error-alta" role="alert" hidden></p>
+
+          <button type="submit" class="btn btn--marino" id="boton-crear">
+            Crear el enlace
+          </button>
+        </form>
+      </div>
+
+      <!-- RESULTADO -->
+      <div id="vista-resultado" hidden>
+        <p class="label">Listo</p>
+        <h1 class="panel__titulo">Ya quedó el <em>enlace</em></h1>
+        <p class="panel__intro" id="resultado-intro"></p>
+
+        <div class="resultado__enlace">
+          <code id="enlace-generado"></code>
+          <button type="button" class="btn btn--marino" id="boton-copiar-enlace">Copiar</button>
+        </div>
+
+        <div class="campo campo--mensaje">
+          <label for="mensaje">Mensaje para WhatsApp</label>
+          <p class="campo__ayuda">Cámbialo a tu gusto antes de copiarlo.</p>
+          <textarea id="mensaje" name="mensaje" rows="9"></textarea>
+          <div class="resultado__acciones">
+            <button type="button" class="btn btn--marino" id="boton-copiar-mensaje">Copiar mensaje</button>
+            <button type="button" class="resultado__otro" id="boton-otro">Crear otro itinerario</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LISTA -->
+      <div id="vista-lista" hidden>
+        <p class="label">Todos</p>
+        <h1 class="panel__titulo">Tus <em>itinerarios</em></h1>
+
+        <div class="campo campo--buscador">
+          <label for="buscador">Buscar</label>
+          <input type="search" id="buscador" autocomplete="off"
+                 placeholder="Nombre del cliente o del viaje" />
+        </div>
+
+        <p class="lista__aviso" id="lista-cargando">Cargando…</p>
+        <p class="lista__aviso lista__aviso--error" id="error-lista" role="alert" hidden></p>
+        <p class="lista__aviso" id="lista-vacia" hidden></p>
+
+        <div class="lista" id="lista-itinerarios"></div>
+      </div>
+
+      <!-- Un solo campo de archivo para todos los reemplazos: se dispara desde
+           el botón de la tarjeta que toque. -->
+      <input type="file" id="reemplazo-pdf" accept="application/pdf" hidden />
+
+    </div>
+  </section>
+
+</main>
+
+<!-- Cliente de Supabase (copia local: el panel no depende de que un CDN esté vivo). -->
+<script src="js/vendor/supabase.js"></script>
+<script type="module" src="js/sesion.js"></script>
+<script type="module" src="js/panel.js"></script>
+<script type="module" src="js/navegacion.js"></script>
+</body>
+</html>

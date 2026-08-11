@@ -1,0 +1,81 @@
+<!-- Plantilla del correo de acceso al panel.
+     Se pega en: Authentication → Emails → Templates → Magic Link.
+     Asunto sugerido: Tu acceso al panel · Tierra de Viajes
+
+     Notas de por qué está escrita así:
+     · Estilos en línea y tablas: los clientes de correo (sobre todo Outlook)
+       ignoran las hojas de estilo y las etiquetas modernas de maquetado.
+     · Georgia en vez de Fraunces: las tipografías web no cargan de forma fiable
+       en el correo. Georgia es la serif de sistema más cercana en carácter.
+     · La variable {{ .ConfirmationURL }} la rellena Supabase con el enlace real. -->
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#F7F2E9;margin:0;padding:32px 0;">
+  <tr>
+    <td align="center">
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background-color:#ffffff;border-radius:4px;">
+
+        <!-- Cabecera -->
+        <tr>
+          <td style="background-color:#15233B;padding:28px 32px;">
+            <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:22px;color:#ffffff;line-height:1.2;">
+              Tierra de Viajes
+            </p>
+            <p style="margin:6px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.7);">
+              by Fraveo
+            </p>
+          </td>
+        </tr>
+
+        <!-- Cuerpo -->
+        <tr>
+          <td style="padding:36px 32px 32px;">
+
+            <p style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:26px;color:#15233B;line-height:1.25;">
+              Tu acceso al panel
+            </p>
+
+            <p style="margin:0 0 28px;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:#5A6275;line-height:1.65;">
+              Toca el botón para entrar. No necesitas contraseña: este enlace te abre la
+              sesión directamente.
+            </p>
+
+            <!-- Botón (con relleno por tabla, que es lo único que respeta Outlook) -->
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+              <tr>
+                <td style="background-color:#E0A526;border-radius:999px;">
+                  <a href="{{ .ConfirmationURL }}"
+                     style="display:inline-block;padding:14px 32px;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;color:#15233B;text-decoration:none;">
+                    Entrar al panel
+                  </a>
+                </td>
+              </tr>
+            </table>
+
+            <p style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#5A6275;line-height:1.65;">
+              El enlace sirve <strong style="color:#15233B;">una sola vez</strong> y caduca en un rato.
+              Si ya no te funciona, pide otro desde la misma pantalla.
+            </p>
+
+            <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#5A6275;line-height:1.65;">
+              Si no fuiste tú quien lo pidió, puedes ignorar este correo sin hacer nada.
+            </p>
+
+          </td>
+        </tr>
+
+        <!-- Pie -->
+        <tr>
+          <td style="padding:0 32px 32px;">
+            <p style="margin:0;padding-top:20px;border-top:1px solid #EFE6D4;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#9aa0ac;line-height:1.6;">
+              Si el botón no abre, copia y pega esta dirección en tu navegador:<br />
+              <span style="color:#5A6275;word-break:break-all;">{{ .ConfirmationURL }}</span>
+            </p>
+          </td>
+        </tr>
+
+      </table>
+
+    </td>
+  </tr>
+</table>
