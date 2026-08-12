@@ -1,0 +1,51 @@
+name: Mantener Supabase despierto
+
+# El plan gratuito de Supabase pausa los proyectos que pasan una semana sin
+# actividad suficiente en la base de datos. Si eso ocurre, TODOS los enlaces de
+# itinerarios dejan de abrir: el cliente que lo consulta durante su viaje se
+# encuentra una pagina muerta.
+#
+# La agencia entrega pocos itinerarios al mes y sus clientes los abren de forma
+# esporadica, asi que habra semanas enteras sin actividad. Esta tarea hace una
+# consulta diaria para que eso no pase.
+#
+# La consulta usa un token que no existe a proposito: no lee ni modifica datos
+# de nadie, solo obliga a la base a responder.
+#
+# LIMITACION IMPORTANTE: GitHub desactiva las tareas programadas cuando un
+# repositorio pasa 60 dias sin actividad. Si nadie toca este repositorio en dos
+# meses, esta tarea se apaga sola y a la semana siguiente el proyecto se pausa.
+# Para que eso no ocurra hay dos caminos:
+#   a) Pasar Supabase a un plan de pago, donde no existe el pausado.
+#   b) Duplicar esta llamada en un servicio de cron externo (por ejemplo
+#      cron-job.org, gratuito), que no depende de la actividad del repositorio.
+
+on:
+  schedule:
+    # Todos los dias a las 12:00 UTC (06:00 en el centro de Mexico).
+    - cron: '0 12 * * *'
+  # Permite lanzarla a mano desde la pestana Actions para comprobar que funciona.
+  workflow_dispatch:
+
+jobs:
+  despertar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Consultar la base de datos
+        run: |
+          RESPUESTA=$(curl -sS --fail-with-body -m 30 \
+            -X POST "https://rnoauhspkuxkwxnidsab.supabase.co/rest/v1/rpc/itinerario_por_token" \
+            -H "apikey: sb_publishable_uN7bZNDdj8j2vsHBkt4cBw_WQrc3TyN" \
+            -H "Content-Type: application/json" \
+            -d '{"p_token":"mantener-el-proyecto-despierto"}')
+
+          echo "Respuesta de Supabase: $RESPUESTA"
+
+          # Se espera "no_encontrado": el token no existe, pero la consulta si
+          # llego a la base, que es lo unico que importa aqui.
+          if echo "$RESPUESTA" | grep -q "no_encontrado"; then
+            echo "La base respondio correctamente. Proyecto activo."
+          else
+            echo "::error::Respuesta inesperada. Revisa si el proyecto de Supabase sigue en pie."
+            exit 1
+          fi
