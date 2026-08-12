@@ -51,8 +51,13 @@ function explicar(error) {
   if (codigo === 'otp_disabled' || codigo === 'signup_disabled' || mensaje.includes('signups not allowed')) {
     return 'Ese correo no tiene acceso al panel. Revisa que esté bien escrito.';
   }
+  // El servidor de correo que trae Supabase de fábrica reparte muy pocos envíos
+  // POR HORA, no por minuto. Decir "espera un minuto" hace pensar que el sistema
+  // está roto cuando en realidad hay que esperar bastante más. Con un servidor de
+  // correo propio configurado, este mensaje deja de aparecer en la práctica.
   if (codigo === 'over_email_send_rate_limit' || mensaje.includes('rate limit')) {
-    return 'Acabas de pedir un enlace. Espera un minuto antes de pedir otro.';
+    return 'Se enviaron varios enlaces en poco tiempo y el correo está limitado por ahora. '
+         + 'Espera un rato antes de volver a pedir uno.';
   }
   if (mensaje.includes('invalid') && mensaje.includes('email')) {
     return 'Ese correo no parece estar completo. Revísalo y vuelve a intentar.';
