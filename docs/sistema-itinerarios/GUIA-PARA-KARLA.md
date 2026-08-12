@@ -102,6 +102,22 @@ tiene que verlo.
 
 ---
 
+## Si pides el enlace y no te llega
+
+El sistema puede mandar **dos correos por hora**, no más. Si pediste varios
+seguidos —por ejemplo porque te equivocaste al escribir tu correo— vas a tener
+que **esperar una hora** antes de que te llegue otro.
+
+No está descompuesto. Espera un rato y vuelve a intentar.
+
+Para que esto casi nunca te pase:
+
+- **Guarda tudominio.com/admin en favoritos**, en el celular y en la computadora.
+  Mientras no cierres sesión, entras directo sin pedir ningún enlace.
+- **No cierres sesión** si vas a seguir usándolo. No hace falta.
+- Cuando pidas un enlace, **revisa que tu correo esté bien escrito** antes de
+  darle al botón.
+
 ## Si algo no funciona
 
 Escríbele a Diego. Cuéntale qué estabas haciendo y, si puedes, mándale una foto de
