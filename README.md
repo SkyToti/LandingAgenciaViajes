@@ -1,6 +1,13 @@
 # Tierra de Viajes by Fraveo — Landing page
 
-**🔗 Demo en vivo: <https://skytoti.github.io/LandingAgenciaViajes/>**
+**🔗 Sitio en producción: <https://viajaconkarla.com.mx>**
+
+> 📘 **¿Vas a dar mantenimiento a este proyecto? Empieza por
+> [`docs/MANTENIMIENTO-Y-ENTREGA.md`](docs/MANTENIMIENTO-Y-ENTREGA.md).**
+> Ahí están la infraestructura, los accesos, las limitaciones, qué revisar cada cierto
+> tiempo y qué se puede cambiar sin romper nada. Este README quedó desactualizado en
+> varios puntos (el puerto local correcto es el **4174**, el despliegue es GitHub Pages y
+> el portal de itinerarios lleva meses en producción); el manual es la referencia buena.
 
 Sitio web de marketing para la agencia **Tierra de Viajes by Fraveo** (Cuernavaca, Morelos),
 enfocado en su servicio **Diseño de Viajes**: itinerarios a la medida de la asesora Karla,
